@@ -20,6 +20,7 @@ def process_special_comments(dictionary: dict) -> dict:
     }
     patt = re.compile(r"^\s*([^:]+):\s+(.+)$")
     patt_eq = re.compile(r"^\s*(.+)\s+=\s+(.+)$")
+    patt_split = re.compile((r"[\s,]+"))
     for i in dictionary:
         directive = i.get('directive')
         if directive and directive == '#':
@@ -35,7 +36,7 @@ def process_special_comments(dictionary: dict) -> dict:
                     m = patt_eq.match(cmd_val)
                     if m:
                         key, val = m.group(1, 2)
-                        res['replace'][key] = val
+                        res['replace'][key] = tuple(patt_split.split(val))
                 elif cmd == 'var':
                     m = patt_eq.match(cmd_val)
                     if m:
@@ -44,7 +45,7 @@ def process_special_comments(dictionary: dict) -> dict:
     return res
 
 
-def get_server_names(server: dict) -> tuple[str]:
+def get_server_names(server: dict, special_comments: dict = None) -> tuple[str]:
     """
         check server_name directive & return tuple of server names
 
@@ -78,12 +79,18 @@ def get_server_names(server: dict) -> tuple[str]:
     """
     for i in server:
         d = i.get('directive')
-        if d and d == 'server_name':
-            args = i['args']
+        if d and d == 'server_name':  args = i['args']
+        if args:
+            server_names = []
+            if special_comments is None: special_comments = process_special_comments(i)
+            for server_name in server_names:
+                if validators.domain(server_name):
+                    pass
+                else:
+                    pass
 
     pass
 
 
 if __name__ == '__main__':
-
-    get_
+    get_server_names()

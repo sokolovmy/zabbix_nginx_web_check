@@ -90,24 +90,23 @@ servers = [
 
 
 class TestNginxConfig(TestCase):
-    self.test_comments_dict = [
-
-        {'directive': '#', 'comment': 'replace: www.test.* = www.test.ru'},
-        {'directive': '#', 'comment': 'replace: ~^www\..+\.example\.org$ = www.test.example.org'},
-        {'directive': '#', 'comment': 'replace_all: hbz.ru'},
-        {'directive': '#', 'comment': 'var: $hbz_var = hbz_value'},
-        {'directive': '#', 'comment': 'var: $Hostname = herov.domain.com'},
-        {'directive': '#', 'comment': ' skip_this: True'},
-        {'directive': 'location', 'args': '/', 'block': {}},
-    ]
     def setUp(self) -> None:
+        self.dir_server = [
+            {'directive': 'server_name', 'args': ['test.ru', 'www.test.*', '', '_', '*', '*.exmaple.net']},
+            {'directive': '#', 'comment': 'replace: www.test.* = www.test.ru'},
+            {'directive': '#', 'comment': 'replace: multi.example.org = www.test.ru test.ru'},
+            {'directive': '#', 'comment': 'replace: ~^www\..+\.example\.org$ = www.test.example.org'},
+            {'directive': '#', 'comment': 'replace_all: hbz.ru'},
+            {'directive': '#', 'comment': 'var: $hbz_var = hbz_value'},
+            {'directive': '#', 'comment': 'var: $Hostname = herov.domain.com'},
+            {'directive': 'location', 'args': '/', 'block': {}},
+        ]
         self.test_comments_result = {
             'replace_all': 'hbz.ru',
-            'skip_this': True,
             'replace': {
-                'www.test.*': 'www.test.ru',
-                '~^www\..+\.example\.org$': 'www.test.example.org'
-
+                'www.test.*': ('www.test.ru',),
+                '~^www\..+\.example\.org$': ('www.test.example.org',),
+                'multi.example.org': ('www.test.ru', 'test.ru',)
             },
             'var': {
                 '$hbz_var': 'hbz_value',
@@ -115,5 +114,24 @@ class TestNginxConfig(TestCase):
             }
         }
 
+        self.dir_server_skip_this = [
+            {'directive': '#', 'comment': ' skip_this: True'},
+        ] + self.dir_server
+
+        self.test_comments_result_skip_this = {
+            'skip_this': True,
+        } | self.test_comments_result
+
     def test_process_special_comments(self):
-        self.assertEqual(process_special_comments(self.test_comments_dict), self.test_comments_result)
+        self.assertEqual(
+            process_special_comments(self.dir_server),
+            self.test_comments_result,
+            'without skip_this:'
+        )
+
+    def test_process_special_comments_with_skip_this(self):
+        self.assertEqual(
+            process_special_comments(self.dir_server_skip_this),
+            self.test_comments_result_skip_this,
+            'with skip_this:'
+        )
