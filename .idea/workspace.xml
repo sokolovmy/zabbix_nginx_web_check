@@ -1,16 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a44da9ea-e25e-4b98-bcf5-ce4cbb3856a3" name="Changes" comment="process special comments,&#10;get server names">
-      <change afterPath="$PROJECT_DIR$/coverage.cmd" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/servers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/nginx_web_check.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/nginx_web_check.iml" afterDir="false" />
+    <list default="true" id="a44da9ea-e25e-4b98-bcf5-ce4cbb3856a3" name="Changes" comment="+ get_location">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/m.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/m.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nginx_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/nginx_config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nginx_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/nginx_config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/test_nginx_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_nginx_config.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -56,7 +49,7 @@
       <recent name="C:\Github\nginx_web_check\src" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Unittests for test_nginx_config.TestNginxConfig.test_prepare_location_supported">
+  <component name="RunManager" selected="Python tests.Unittests for test_nginx_config.TestNginxConfig.test_prepare_empty_loc">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="nginx_web_check" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -99,6 +92,20 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="Unittests for test_nginx_config.TestNginxConfig.test_prepare_empty_loc" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+      <module name="nginx_web_check" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_nginx_config.TestNginxConfig.test_prepare_empty_loc&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
     <configuration name="Unittests for test_nginx_config.TestNginxConfig.test_prepare_location_check_unsupported" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
       <module name="nginx_web_check" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -124,20 +131,6 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
       <option name="_new_target" value="&quot;test_nginx_config.TestNginxConfig.test_prepare_location_non_corrected_comment&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Unittests for test_nginx_config.TestNginxConfig.test_prepare_location_skip_this" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
-      <module name="nginx_web_check" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_nginx_config.TestNginxConfig.test_prepare_location_skip_this&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -173,19 +166,19 @@
       <item itemvalue="Python.main" />
       <item itemvalue="Python.nginx_config" />
       <item itemvalue="Python tests.Unittests in tests" />
-      <item itemvalue="Python tests.Unittests for test_nginx_config.TestNginxConfig.test_prepare_location_skip_this" />
       <item itemvalue="Python tests.Unittests for test_nginx_config.TestNginxConfig.test_prepare_location_non_corrected_comment" />
       <item itemvalue="Python tests.Unittests for test_nginx_config.TestNginxConfig.test_prepare_location_check_unsupported" />
       <item itemvalue="Python tests.Unittests for test_nginx_config.TestNginxConfig.test_prepare_location_supported" />
       <item itemvalue="Python tests.Unittests for test_nginx_config.TestNginxConfig.test_prepare_location_var" />
+      <item itemvalue="Python tests.Unittests for test_nginx_config.TestNginxConfig.test_prepare_empty_loc" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Unittests for test_nginx_config.TestNginxConfig.test_prepare_empty_loc" />
         <item itemvalue="Python tests.Unittests for test_nginx_config.TestNginxConfig.test_prepare_location_supported" />
         <item itemvalue="Python tests.Unittests for test_nginx_config.TestNginxConfig.test_prepare_location_check_unsupported" />
         <item itemvalue="Python tests.Unittests for test_nginx_config.TestNginxConfig.test_prepare_location_var" />
         <item itemvalue="Python tests.Unittests for test_nginx_config.TestNginxConfig.test_prepare_location_non_corrected_comment" />
-        <item itemvalue="Python tests.Unittests for test_nginx_config.TestNginxConfig.test_prepare_location_skip_this" />
       </list>
     </recent_temporary>
   </component>
@@ -219,7 +212,21 @@
       <option name="project" value="LOCAL" />
       <updated>1633861938205</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="+ get_location">
+      <created>1633892704149</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1633892704149</updated>
+    </task>
+    <task id="LOCAL-00005" summary="+ get_location">
+      <created>1633892722250</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1633892722250</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -239,7 +246,8 @@
     <MESSAGE value="Initial commit" />
     <MESSAGE value="process special comments" />
     <MESSAGE value="process special comments,&#10;get server names" />
-    <option name="LAST_COMMIT_MESSAGE" value="process special comments,&#10;get server names" />
+    <MESSAGE value="+ get_location" />
+    <option name="LAST_COMMIT_MESSAGE" value="+ get_location" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -248,11 +256,6 @@
           <url>file://$PROJECT_DIR$/src/m.py</url>
           <line>22</line>
           <option name="timeStamp" value="9" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/tests/test_nginx_config.py</url>
-          <line>210</line>
-          <option name="timeStamp" value="16" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

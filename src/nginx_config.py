@@ -210,8 +210,7 @@ def prepare_location(location_args: list, special_comments: dict) -> Optional[st
             else:
                 return prep_name_var(arg[1:], special_comments)
         elif arg[0] == '~':
-            return None
-        elif length >= 2 and arg[0:1] == '~*':
+            # checks ~ and ~*
             return None
         elif length >= 2 and arg[0:2] == '^~':
             if length == 2:

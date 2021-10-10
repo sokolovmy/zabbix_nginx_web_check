@@ -239,3 +239,9 @@ class TestNginxConfig(TestCase):
             '/loc/hbz',
             prepare_location(['/loc$hbz_var'], comments)
         )
+
+    def test_prepare_empty_loc(self):
+        self.assertEqual(
+            None,
+            prepare_location([], {})
+        )
