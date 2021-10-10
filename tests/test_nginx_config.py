@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from nginx_config import process_special_comments
+from nginx_config import process_special_comments, get_server_names
 
 servers = [
     [
@@ -91,18 +91,15 @@ servers = [
 
 class TestNginxConfig(TestCase):
     def setUp(self) -> None:
-        self.dir_server = [
-            {'directive': 'server_name', 'args': ['test.ru', 'www.test.*', '', '_', '*', '*.exmaple.net']},
+        self.dir_server_comments = [
             {'directive': '#', 'comment': 'replace: www.test.* = www.test.ru'},
             {'directive': '#', 'comment': 'replace: multi.example.org = www.test.ru test.ru'},
             {'directive': '#', 'comment': 'replace: ~^www\..+\.example\.org$ = www.test.example.org'},
-            {'directive': '#', 'comment': 'replace_all: hbz.ru'},
             {'directive': '#', 'comment': 'var: $hbz_var = hbz_value'},
-            {'directive': '#', 'comment': 'var: $Hostname = herov.domain.com'},
+            {'directive': '#', 'comment': 'var: $hostname = herov.domain.com'},
             {'directive': 'location', 'args': '/', 'block': {}},
         ]
         self.test_comments_result = {
-            'replace_all': 'hbz.ru',
             'replace': {
                 'www.test.*': ('www.test.ru',),
                 '~^www\..+\.example\.org$': ('www.test.example.org',),
@@ -110,28 +107,100 @@ class TestNginxConfig(TestCase):
             },
             'var': {
                 '$hbz_var': 'hbz_value',
-                '$Hostname': 'herov.domain.com',
+                '$hostname': 'herov.domain.com',
             }
         }
+        self.dir_server_comments_replace_all = [
+                                                   {'directive': '#', 'comment': 'replace_all: hbz.ru'},
+                                               ] + self.dir_server_comments
 
-        self.dir_server_skip_this = [
-            {'directive': '#', 'comment': ' skip_this: True'},
-        ] + self.dir_server
+        self.test_comments_result_replace_all = {
+                                                    'replace_all': ('hbz.ru',),
+                                                } | self.test_comments_result
+
+        self.dir_server_comments_skip_this = [
+                                                 {'directive': '#', 'comment': ' skip_this: True'},
+                                             ] + self.dir_server_comments
 
         self.test_comments_result_skip_this = {
-            'skip_this': True,
-        } | self.test_comments_result
+                                                  'skip_this': True,
+                                              } | self.test_comments_result
 
     def test_process_special_comments(self):
         self.assertEqual(
-            process_special_comments(self.dir_server),
             self.test_comments_result,
+            process_special_comments(self.dir_server_comments, 'test.hostname.org'),
             'without skip_this:'
         )
 
     def test_process_special_comments_with_skip_this(self):
         self.assertEqual(
-            process_special_comments(self.dir_server_skip_this),
             self.test_comments_result_skip_this,
+            process_special_comments(self.dir_server_comments_skip_this, 'test.hostname.org'),
             'with skip_this:'
+        )
+
+    def test_process_special_comments_with_replace_all(self):
+        self.assertEqual(
+            self.test_comments_result_replace_all,
+            process_special_comments(self.dir_server_comments_replace_all, 'test.hostname.org'),
+            'with replace_all:'
+        )
+
+    def test_get_server_names_single_empty_name(self):
+        self.assertEqual(
+            ('test.hostname.org',),
+            get_server_names([{'directive': 'server_name', 'args': ['']}], 'test.hostname.org'),
+        )
+
+    def test_get_server_names_single_empty_name2(self):
+        self.assertEqual(
+            ('h.domain.com',),
+            get_server_names(
+                [
+                    {'directive': 'server_name', 'args': ['']},
+                    {'directive': '#', 'comment': 'var: $hostname = h.domain.com'}
+                ],
+                'test.hostname.org'
+            ),
+        )
+
+    def test_get_server_names(self):
+        self.assertEqual(
+            ('test.ru', 'www.example.net'),
+            get_server_names(
+                 [
+                    {'directive': 'server_name', 'args': ['test.ru', 'www.test.*', '', '_', '*', '*.example.net']}
+                ] + self.dir_server_comments,
+                'test.hostname.org'),
+        )
+
+    def test_get_server_names_skip_this(self):
+        self.assertEqual(
+            None,
+            get_server_names(
+                 [
+                    {'directive': 'server_name', 'args': ['test.ru', 'www.test.*', '', '_', '*', '*.example.net']}
+                ] + self.dir_server_comments_skip_this,
+                'test.hostname.org'),
+        )
+
+    def test_get_server_names_replace_all(self):
+        self.assertEqual(
+            ('hbz.ru',),
+            get_server_names(
+                 [
+                    {'directive': 'server_name', 'args': ['test.ru', 'www.test.*', '', '_', '*', '*.example.net']}
+                ] + self.dir_server_comments_replace_all,
+                'test.hostname.org'),
+        )
+
+    def test_get_server_names_vars(self):
+        self.assertEqual(
+            ('test.hbz_value', 'www.example.net'),
+            get_server_names(
+                 [
+                    {'directive': 'server_name', 'args': ['test.$hbz_var', 'www.test.*', '', '_', '*', '*.example.net']}
+                ] + self.dir_server_comments,
+                'test.hostname.org'),
         )
