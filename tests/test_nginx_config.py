@@ -243,7 +243,7 @@ class TestNginxConfig(TestCase):
     def test_prepare_empty_loc(self):
         self.assertEqual(
             None,
-            prepare_location([], {})
+            prepare_location([''], {})
         )
 
     def test_skip_on_return(self):
@@ -258,4 +258,12 @@ class TestNginxConfig(TestCase):
         self.assertEqual(
             True,
             skip_on_return([{'directive': 'return', 'args': ['502']}], 399)
+        )
+        self.assertEqual(
+            False,
+            skip_on_return([{'directive': 'return', 'args': ['50w2']}], 399)
+        )
+        self.assertEqual(
+            False,
+            skip_on_return([{'directive': 'listen', 'args': ['80']}], 399)
         )
