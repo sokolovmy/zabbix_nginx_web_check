@@ -1,2 +1,7 @@
 nginx-cfg/*
 nginx-cfg
+.coverage
+__pycache__
+htmlcov
+htmlcov/*
+

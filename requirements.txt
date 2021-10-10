@@ -1,1 +1,2 @@
+crossplane==0.5.7
 validators==0.18.2
