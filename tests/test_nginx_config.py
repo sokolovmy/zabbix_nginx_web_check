@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from nginx_config import process_special_comments, get_server_names, get_listen, prepare_location
+from nginx_config import process_special_comments, get_server_names, get_listen, prepare_location, skip_on_return
 
 
 class TestNginxConfig(TestCase):
@@ -244,4 +244,18 @@ class TestNginxConfig(TestCase):
         self.assertEqual(
             None,
             prepare_location([], {})
+        )
+
+    def test_skip_on_return(self):
+        self.assertEqual(
+            True,
+            skip_on_return([{'directive': 'return', 'args': ['301', 'http://her.znama.kuda']}], 299)
+        )
+        self.assertEqual(
+            False,
+            skip_on_return([{'directive': 'return', 'args': ['301', 'http://her.znama.kuda']}], 301)
+        )
+        self.assertEqual(
+            True,
+            skip_on_return([{'directive': 'return', 'args': ['502']}], 399)
         )

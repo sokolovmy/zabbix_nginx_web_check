@@ -17,8 +17,7 @@ def process_special_comments(directives_list: list, hostname_var: str) -> dict:
     :rtype: dictionary
     """
     res = {
-        'replace': {},
-        # TODO: may be replace to {str, tuple[str, ...]},
+        'replace': dict(),
         'var': {
             '$hostname': hostname_var
         },
@@ -188,7 +187,7 @@ def prepare_location(location_args: list, special_comments: dict) -> Optional[st
     если в комментариях нет им замены они будут пропущены
     Чтобы заменить можно использовать
         # replace_all: <new location>
-        если представлен списов, то берется первое значение из списка
+        если представлен список, то берется первое значение из списка
     Чтобы пропустить обработку можно написать в комментариях
        #  skip_this: True
     :param location_args:
@@ -224,3 +223,31 @@ def prepare_location(location_args: list, special_comments: dict) -> Optional[st
             else:
                 return res
     return None
+
+
+def skip_on_return(block: list, return_above_skip) -> bool:
+    for d in block:
+        dd = d['directive']
+        if dd == 'return':
+            da = d['args']
+            if len(da) > 0:
+                try:
+                    return_code = int(da[0])
+                except ValueError:
+                    return False
+
+                return return_code > return_above_skip
+
+    return False
+
+
+def get_locations(server_block: dict, hostname_var, return_above_skip=399) -> list[str]:
+    locations: list[str] = []
+    for d in server_block:
+        dd = d['directive']
+        if dd == 'location':
+            da = d['args']
+            db = d.get('block')
+            process_special_comments(db, hostname_var)
+
+    return locations
