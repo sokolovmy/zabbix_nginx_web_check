@@ -1,6 +1,9 @@
+import os.path
 import re
+import sys
 from typing import Optional
 
+import crossplane
 import validators
 
 
@@ -92,7 +95,7 @@ def prep_server_name(name: str, special_comments: dict, single=False) -> Optiona
     return res
 
 
-def get_server_names(server: list, hostname_var: str, special_comments: dict = None) -> Optional[tuple[str, ...]]:
+def get_server_names(server_block: list, hostname_var: str, special_comments: dict = None) -> Optional[tuple[str, ...]]:
     """
         check server_name directive & return tuple of server names
 
@@ -124,7 +127,7 @@ def get_server_names(server: list, hostname_var: str, special_comments: dict = N
         # var: $Host = my_site.domain.com
         # var $Hostname = another_my_site_name.domain.com
 
-    :param server: словарь возвращаемый crossplane.parse из директивы server
+    :param server_block: словарь возвращаемый crossplane.parse из директивы server
     :param special_comments: словарь подготовленный process_special_comments
     :param hostname_var: $hostname
     :returns возвращает кортеж имен из директивы server_name
@@ -132,14 +135,14 @@ def get_server_names(server: list, hostname_var: str, special_comments: dict = N
 
     server_names = []
     if special_comments is None:
-        special_comments = process_special_comments(server, hostname_var)
+        special_comments = process_special_comments(server_block, hostname_var)
 
     if special_comments.get('skip_this'):
         return None
     elif special_comments.get('replace_all'):
         return special_comments['replace_all']
 
-    for i in server:
+    for i in server_block:
         d = i.get('directive')
         if d and d == 'server_name':
             args = i['args']
@@ -155,11 +158,11 @@ def get_server_names(server: list, hostname_var: str, special_comments: dict = N
         return hostname_var,
 
 
-def get_listen(listen_args: list[str], port=80) -> tuple[int, str]:
+def get_listen(listen_args: list[str], default_port=80) -> tuple[int, str]:
     """
         Обрабатывает аргумент директивы listen
 
-    :param port: порт по умолчанию nginx (если под root 80, если нет 8000)
+    :param default_port: порт по умолчанию nginx (если под root 80, если нет 8000)
     :param listen_args список аргументов директивы listen
     :return (<номер порта>, <(http|https)>)
     """
@@ -174,10 +177,20 @@ def get_listen(listen_args: list[str], port=80) -> tuple[int, str]:
         else:
             res = patt_port.search(arg)
             if res:
-                port = res.group('port')
-            port = int(port)
+                default_port = res.group('port')
+            default_port = int(default_port)
 
-    return port, protocol,
+    return default_port, protocol,
+
+
+def get_all_listen_directives(server_block: list[dict], default_port=80) -> list[tuple[int, str]]:
+    # TODO: написать
+    listens = []
+    for d in server_block:
+        if d['directive'].lower() == 'listen':
+            listens.append(get_listen(d['args'], default_port))
+
+    return listens
 
 
 def prepare_location(location_args: list, special_comments: dict) -> Optional[str]:
@@ -225,29 +238,145 @@ def prepare_location(location_args: list, special_comments: dict) -> Optional[st
     return None
 
 
-def skip_on_return(block: list, return_above_skip) -> bool:
+def skip_on_return(block: list, return_code) -> bool:
     for d in block:
-        dd = d['directive']
+        dd = d['directive'].lower()
         if dd == 'return':
             da = d['args']
             if len(da) > 0:
                 try:
-                    return_code = int(da[0])
+                    return_code_from_directive = int(da[0])
                 except ValueError:
                     return False
 
-                return return_code > return_above_skip
+                return return_code_from_directive > return_code
 
     return False
 
 
-def get_locations(server_block: dict, hostname_var, return_above_skip=399) -> list[str]:
+def get_locations(server_block: list, hostname_var, return_code=399) -> list[str]:
+    """
+    Выдает список location's из блока server. Вложенные location's также.
+    Не включаются в список, если return http code больше return_code
+
+    Поддерживаются специальные комментарии:
+        # replace_all: <changed location>
+        # skip_this: True
+        # var: $var_name = var_value
+        # var: @another_var_name = var_value
+    Не поддерживаются:
+        - locations with regular expressions
+        - named locations (example: @Named)
+    Их можно заменить при помощи специального объявления в комментариях
+    :rtype: object
+    :param server_block: блок server crossplane.parse
+    :param hostname_var: переменная $hostname
+    :param return_code:
+    :return:
+    """
     locations: list[str] = []
     for d in server_block:
-        dd = d['directive']
+        dd = d['directive'].lower()
         if dd == 'location':
             da = d['args']
             db = d.get('block')
-            process_special_comments(db, hostname_var)
+            if db and skip_on_return(db, return_code):
+                continue
+            special_comments = process_special_comments(db, hostname_var)
+            location = prepare_location(da, special_comments)
+            if location:
+                locations.append(location)
+            nested_locations = get_locations(db, hostname_var, return_code)
+            if len(nested_locations):
+                locations.extend(nested_locations)
 
     return locations
+
+
+def process_servers(html_block: list, hostname_var, default_port=80, return_code=399, skip_locations=False) \
+        -> list[dict[str, tuple[str]]]:
+    """
+    Обрабатывает html block crossplane.parse. возвращает список словарей в котором лежат server_name's & location's
+    Не включаются в список, если return http code больше return_code
+    Поддерживаются специальные комментарии:
+        # replace: server_name = changed_server_name
+        имя из списка будет заменено на другое
+        # replace_all:
+        вся строка с именами будет заменена на новую
+        # skip_this: True
+        пропустить этот сервер
+        # var: $var_name = var_value
+        # var: @another_var_name = var_value
+        переменные встречающиеся в именах будут заменены в соответствии с вышеописанным списком
+    Имена из директивы server_name, такие как:
+          - *.example.org - по умолчанию будут заменены на www.example.org,
+          - .example.org - будет заменено на example.org,
+          - www.example.* - удаляется, т.к. невозможно точно предсказать какие имена в реальности будут использованы,
+          - ~^www\..+\.example\.org$ - все регулярные выражения также будут удаляться.
+          - "" - удаляется, если значение не является единственным в списке, в противном случае заменяется на $hostname
+          - имена *, _, --, !@# и другие некорректные имена удаляются из списка
+    :param skip_locations: не обрабатывать блоки locations
+    :param html_block: html block from crossplane.parse
+    :param default_port: default listen port
+    :param hostname_var: variable $hostname
+    :param return_code: если встречается директива return и код больше, чем указан, сервер пропускается
+    :rtype: list[{
+                'server_names': tuple[str],
+                'locations': tuple[str],
+                'listen': tuple[str]
+                }]
+    """
+    ret_val = []
+    for d in html_block:
+        dd = d['directive'].lower()
+        if dd == 'server':
+            server_block = d['block']
+            if skip_on_return(server_block, return_code):
+                continue
+            server_names = get_server_names(server_block, hostname_var)
+            if server_names:
+                server = {
+                    'server_names': server_names,
+                    'locations': get_locations(server_block, hostname_var, return_code) if not skip_locations else [],
+                    'listens': get_all_listen_directives(server_block, default_port)
+                }
+                ret_val.append(server)
+    return ret_val
+
+
+def get_URLs_from_config(config_file_name: str, hostname_var: str, default_port: int = 80,
+                         return_code: int = 399, skip_locations=False) -> Optional[list[str]]:
+    # TODO: написать
+    pl = crossplane.parse(config_file_name, comments=True, combine=True, ignore=('types', 'events',))
+    config = pl['config'][0]['parsed']
+    # looking for a directive http
+    http_block = None
+    for d in config:
+        if d['directive'].lower() == 'http':
+            http_block = d['block']
+            break
+    if http_block is None:
+        # something wrong with config file
+        return None
+    res = process_servers(http_block, hostname_var, default_port, return_code, skip_locations)
+    # servers0_answer = [{
+    #         'locations': ['/hbz', '/equal', '/ifequal_not_check_regexpr', '/namedLocation/to/hbz_value'],
+    #         'server_names': ('hbz.ru',),
+    #         'listens': [(80, 'http')],
+    #     }]
+    urls: list[str] = []
+    for server in res:
+        for listen in server['listens']:
+            for server_name in server['server_names']:
+                server_name_url = listen[1] + '://' + server_name
+                if listen not in ((80, 'http'), (443, 'https')):
+                    server_name_url += str(listen[0])
+                urls.append(server_name_url)
+                if not skip_locations:
+                    for location in server['locations']:
+                        if location == '/':
+                            continue
+                        if len(location) >= 1 and location[0] != '/':
+                            location = '/' + location
+                        urls.append(server_name_url + location)
+    return urls

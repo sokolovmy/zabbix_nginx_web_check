@@ -1,6 +1,7 @@
 from unittest import TestCase
 
-from nginx_config import process_special_comments, get_server_names, get_listen, prepare_location, skip_on_return
+from nginx_config import process_special_comments, get_server_names, get_listen, prepare_location, skip_on_return, \
+    get_locations, process_servers, get_URLs_from_config
 
 
 class TestNginxConfig(TestCase):
@@ -266,4 +267,205 @@ class TestNginxConfig(TestCase):
         self.assertEqual(
             False,
             skip_on_return([{'directive': 'listen', 'args': ['80']}], 399)
+        )
+
+    def test_get_locations(self):
+        self.assertEqual(
+            ['/var/asdf/my.host.name', '/named_location', '/', '/hbz', '/hbz/hbz', '/1/2/4'],
+            get_locations([
+                {'directive': 'location', 'args': ['/var/$qwe$hostname'], 'block': [
+
+                    {'directive': '#', 'comment': ' var: $qwe = asdf/'}
+                ]},
+                {'directive': 'location', 'args': ['skipped'], 'block': [
+
+                    {'directive': '#', 'comment': ' skip_this: True'}
+                ]},
+                {'directive': 'location', 'args': ['@named'], 'block': [
+
+                    {'directive': '#', 'comment': ' replace_all: /named_location'}
+                ]},
+                {'directive': 'location', 'args': ['/'], 'block': []},
+                {'directive': 'location', 'args': ['/hbz'], 'block': [
+                    {'directive': 'location', 'args': ['/hbz/hbz'], 'block': []},
+                    {'directive': 'location', 'args': ['/hbz/gubz'], 'block': [
+                        {'directive': 'return', 'args': ['400']}
+                    ]}
+                ]},
+                {'directive': 'location', 'args': ['/1/2/3'], 'block': [
+                    {'directive': 'return', 'args': ['500']},
+                ]},
+                {'directive': 'location', 'args': ['/1/2/4'], 'block': [
+                    {'directive': 'return', 'args': ['250']},
+                ]},
+            ], 'my.host.name')
+        )
+
+    def test_process_server(self):
+        self.assertEqual(
+            servers_answer,
+            process_servers(servers, hostname_var='host.domain.name')
+        )
+
+    def test_process_server0(self):
+        self.assertEqual(
+            servers0_answer,
+            process_servers(servers0, hostname_var='host.domain.name')
+        )
+
+
+servers0_answer = [
+    {
+        'locations': ['/', 'incorrect_location/', '/hbz', '/equal', '/ifequal_not_check_regexpr',
+                      '/namedLocation/to/hbz_value'],
+        'server_names': ('hbz.ru',),
+        'listens': [(80, 'http')],
+    }
+]
+servers0 = [
+    {'directive': 'server', 'block': [
+        {'args': ['test.ru', 'www.test.*', '', '_', '*', '*.exmaple.net'], 'directive': 'server_name', 'line': 4},
+        {'args': [], 'comment': ' replace: www.test.* = www.test.ru', 'directive': '#', 'line': 5},
+        {'args': [], 'comment': ' replace_all: hbz.ru', 'directive': '#', 'line': 6},
+        {'args': [], 'comment': ' var: $hbz_var = hbz_value', 'directive': '#', 'line': 7},
+        {'args': ['1.1.1.1:80'], 'directive': 'listen', 'line': 8},
+        {'args': ['/'], 'block': [], 'directive': 'location', 'line': 9},
+        {'args': ['incorrect_location/'], 'block': [], 'directive': 'location', 'line': 9},
+        {'args': ['/hbz'], 'block': [], 'directive': 'location', 'line': 9},
+        {'args': ['=', '/equal'], 'block': [], 'directive': 'location', 'line': 11},
+        {'args': ['~', '/regexpr'], 'block': [], 'directive': 'location', 'line': 13},
+        {'args': ['~*', '/CaseInsentiveRegexpr'], 'block': [], 'directive': 'location', 'line': 15},
+        {'args': ['^~', '/ifequal_not_check_regexpr'], 'block': [], 'directive': 'location', 'line': 17},
+        {'args': ['@NamedLocation'], 'directive': 'location', 'line': 19, 'block': [
+            {'comment': ' var: @NamedLocation = /namedLocation/to/hbz_value', 'directive': '#'},
+        ]}
+    ]},
+    {'directive': 'server', 'block': [
+        {'directive': 'server_name', 'args': ['skipped.server.com']},
+        {'directive': 'return', 'args': ['500']}
+    ]}
+]
+
+servers_answer = [
+    {'listens': [(80, 'http')], 'locations': [], 'server_names': ('hbz.ru',)},
+    {'listens': [(80, 'http')], 'locations': [],
+     'server_names': (
+         'www.haulmont.com', 'haulmont.dev', 'www.haulmont.dev', 'haulmont.tech', 'haulmont.com', 'www.haulmont.tech',
+         'haulmont.org', 'www.haulmont.org', 'haulmont.net', 'www.haulmont.net', 'haulmont-technology.ru',
+         'www.haulmont-technology.ru', 'haulmont-technology.com', 'www.haulmont-technology.com',
+         'haulmont.co.uk', 'www.haulmont.co.uk', 'haulmont-technology.co.uk', 'www.haulmont-technology.co.uk'
+     )},
+    {'listens': [(443, 'https')], 'locations': [], 'server_names': ('haulmont.com',)},
+    {'listens': [(443, 'https')], 'locations': [], 'server_names': ('haulmont.dev', 'www.haulmont.dev')},
+    {'listens': [(443, 'https')], 'locations': ['/', '/forms'], 'server_names': ('www.haulmont.com',)},
+    {'listens': [(80, 'http')], 'locations': [], 'server_names': ('www.haulmont.ru', 'haulmont.ru')},
+    {'listens': [(443, 'https')], 'locations': [], 'server_names': ('haulmont.ru',)},
+    {
+        'listens': [(443, 'https')],
+        'locations': ['/sites/default/files/webform/cv-ru', '/'],
+        'server_names': ('www.haulmont.ru',)
+    }
+]
+
+servers = [
+    {'directive': 'server', 'block': [
+        {'directive': 'server_name', 'line': 4, 'args': ['test.ru', 'www.test.*', '', '_', '*', '*.exmaple.net']},
+        {'directive': '#', 'line': 5, 'args': [], 'comment': ' replace: www.test.* = www.test.ru'},
+        {'directive': '#', 'line': 6, 'args': [], 'comment': ' replace_all: hbz.ru'},
+        {'directive': '#', 'line': 7, 'args': [], 'comment': ' var: $hbz_var = hbz_value'},
+        {'directive': 'listen', 'line': 8, 'args': ['1.1.1.1:80']}
+    ]},
+    {'directive': 'server', 'block': [
+        {'directive': 'listen', 'line': 15, 'args': ['80']},
+        {'directive': 'server_name', 'line': 16,
+         'args': [
+             'www.haulmont.com', 'haulmont.dev',
+             'www.haulmont.dev', 'haulmont.tech',
+             'haulmont.com', 'www.haulmont.tech',
+             'haulmont.org', 'www.haulmont.org',
+             'haulmont.net', 'www.haulmont.net',
+             'haulmont-technology.ru',
+             'www.haulmont-technology.ru',
+             'haulmont-technology.com',
+             'www.haulmont-technology.com',
+             'haulmont.co.uk', 'www.haulmont.co.uk',
+             'haulmont-technology.co.uk',
+             'www.haulmont-technology.co.uk'
+         ]
+         },
+        {'directive': 'return', 'line': 17, 'args': ['301', 'https://www.haulmont.com$request_uri']}
+    ]},
+    {'directive': 'server', 'block': [
+        {'directive': 'listen', 'line': 21, 'args': ['443', 'ssl', 'http2']},
+        {'directive': 'server_name', 'line': 22, 'args': ['haulmont.com']},
+        {'directive': 'return', 'line': 23, 'args': ['301', 'https://www.haulmont.com$request_uri']}
+    ]},
+    {'directive': 'server', 'block': [
+        {'directive': 'listen', 'line': 27, 'args': ['443', 'ssl', 'http2']},
+        {'directive': 'server_name', 'line': 28, 'args': ['haulmont.dev', 'www.haulmont.dev']},
+        {'directive': 'return', 'line': 29, 'args': ['301', 'https://www.haulmont.com$request_uri']}
+    ]},
+    {'directive': 'server', 'block': [
+        {'directive': 'server_name', 'line': 33, 'args': ['www.haulmont.com']},
+        {'directive': 'listen', 'line': 34, 'args': ['443', 'ssl', 'http2']},
+        {
+            'directive': 'location', 'line': 35, 'args': ['/'],
+            'block': [{'directive': 'include', 'line': 36, 'args': ['./includes/proxy_pass_reverse'], 'includes': [1]},
+                      {'directive': 'proxy_pass', 'line': 37, 'args': ['http://192.168.33.97:3002$request_uri']}]
+        },
+        {
+            'directive': 'location', 'line': 40, 'args': ['/forms'],
+            'block': [{'directive': 'proxy_set_header', 'line': 41, 'args': ['X-Real-IP', '$remote_addr']},
+                      {'directive': 'proxy_pass', 'line': 42, 'args': ['http://192.168.33.97:3003']}]
+        },
+    ]},
+    {'directive': 'server', 'block': [
+        {'directive': 'listen', 'line': 46, 'args': ['80']},
+        {'directive': 'server_name', 'line': 47, 'args': ['www.haulmont.ru', 'haulmont.ru']},
+        {'directive': 'return', 'line': 48, 'args': ['301', 'https://www.haulmont.ru$request_uri']}
+    ]},
+    {'directive': 'server', 'block': [
+        {'directive': 'listen', 'line': 52, 'args': ['443', 'ssl', 'http2']},
+        {'directive': 'server_name', 'line': 53, 'args': ['haulmont.ru']},
+        {'directive': 'return', 'line': 54, 'args': ['301', 'https://www.haulmont.ru$request_uri']}
+    ]},
+    {'directive': 'server', 'block': [
+        {'directive': 'server_name', 'line': 57, 'args': ['www.haulmont.ru']},
+        {'directive': 'listen', 'line': 59, 'args': ['443', 'ssl', 'http2']},
+        {
+            'directive': 'location', 'line': 60, 'args': ['~*cv-ru\\/.*xml$'],
+            'block': [{'directive': 'return', 'line': 61, 'args': ['520']}]
+        },
+        {
+            'directive': 'location', 'line': 63, 'args': ['~*\\?q=node\\/add*$'],
+            'block': [{'directive': 'return', 'line': 64, 'args': ['520']}]},
+        {
+            'directive': 'location', 'line': 67,
+            'args': ['/sites/default/files/webform/cv-ru'],
+            'block': [
+                {'directive': 'proxy_pass', 'line': 68,
+                 'args': ['http://192.168.33.68/sites/default/files/webform/cv-ru']}
+            ]
+        },
+        {
+            'directive': 'location', 'line': 70, 'args': ['/'],
+            'block': [{'directive': 'proxy_pass', 'line': 71, 'args': ['http://192.168.33.68/']}]}
+    ]}
+]
+
+
+class TestM(TestCase):
+    def test_get_urls_from_config(self):
+        self.assertEqual(
+            ['http://hbz.ru',
+             'http://hbz.ru/hbz',
+             'http://hbz.ru/equal',
+             'http://hbz.ru/ifequal_not_check_regexpr'],
+            get_URLs_from_config('./nginx.conf', 'h.domain.com')
+        )
+
+    def test_get_urls_file_not_found(self):
+        self.assertEqual(
+            None,
+            get_URLs_from_config('nonexistent.conf', 'h.domain.com')
         )
