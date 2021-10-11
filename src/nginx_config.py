@@ -346,7 +346,7 @@ def process_servers(html_block: list, hostname_var, default_port=80, return_code
 
 def get_URLs_from_config(config_file_name: str, hostname_var: str, default_port: int = 80,
                          return_code: int = 399, skip_locations=False) -> Optional[list[str]]:
-    # TODO: написать
+
     pl = crossplane.parse(config_file_name, comments=True, combine=True, ignore=('types', 'events',))
     config = pl['config'][0]['parsed']
     # looking for a directive http
