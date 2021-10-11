@@ -453,19 +453,64 @@ servers = [
     ]}
 ]
 
+config_res = ['http://hbz.ru',
+              'http://hbz.ru/hbz',
+              'http://hbz.ru/equal',
+              'http://hbz.ru/ifequal_not_check_regexpr',
+              'http://non.standard.port:1234',
+              'http://non.standard.port:1234/noncorrect/asd']
 
-class TestM(TestCase):
-    def test_get_urls_from_config(self):
-        self.assertEqual(
-            ['http://hbz.ru',
-             'http://hbz.ru/hbz',
-             'http://hbz.ru/equal',
-             'http://hbz.ru/ifequal_not_check_regexpr'],
-            get_URLs_from_config('./nginx.conf', 'h.domain.com')
-        )
 
-    def test_get_urls_file_not_found(self):
-        self.assertEqual(
-            None,
-            get_URLs_from_config('nonexistent.conf', 'h.domain.com')
-        )
+def test_get_urls_from_config(self):
+    self.assertEqual(
+        config_res,
+        get_URLs_from_config('./nginx.conf', 'h.domain.com')
+    )
+
+
+def test_get_urls_file_not_found(self):
+    self.assertEqual(
+        None,
+        get_URLs_from_config('nonexistent.conf', 'h.domain.com')
+    )
+
+
+config_res2 = ['http://hbz.ru',
+               'http://hbz.ru/hbz',
+               'http://hbz.ru/equal',
+               'http://hbz.ru/ifequal_not_check_regexpr',
+               'http://www.haulmont.com',
+               'http://haulmont.dev',
+               'http://www.haulmont.dev',
+               'http://haulmont.tech',
+               'http://haulmont.com',
+               'http://www.haulmont.tech',
+               'http://haulmont.org',
+               'http://www.haulmont.org',
+               'http://haulmont.net',
+               'http://www.haulmont.net',
+               'http://haulmont-technology.ru',
+               'http://www.haulmont-technology.ru',
+               'http://haulmont-technology.com',
+               'http://www.haulmont-technology.com',
+               'http://haulmont.co.uk',
+               'http://www.haulmont.co.uk',
+               'http://haulmont-technology.co.uk',
+               'http://www.haulmont-technology.co.uk',
+               'https://haulmont.com',
+               'https://haulmont.dev',
+               'https://www.haulmont.dev',
+               'https://www.haulmont.com',
+               'https://www.haulmont.com/forms',
+               'http://www.haulmont.ru',
+               'http://haulmont.ru',
+               'https://haulmont.ru',
+               'https://www.haulmont.ru',
+               'https://www.haulmont.ru/sites/default/files/webform/cv-ru']
+
+
+def test_get_urls_file_config2(self):
+    self.assertEqual(
+        config_res2,
+        get_URLs_from_config('nginx2.conf', 'h.domain.com')
+    )

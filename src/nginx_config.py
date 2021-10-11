@@ -370,7 +370,7 @@ def get_URLs_from_config(config_file_name: str, hostname_var: str, default_port:
             for server_name in server['server_names']:
                 server_name_url = listen[1] + '://' + server_name
                 if listen not in ((80, 'http'), (443, 'https')):
-                    server_name_url += str(listen[0])
+                    server_name_url += ':' + str(listen[0])
                 urls.append(server_name_url)
                 if not skip_locations:
                     for location in server['locations']:
