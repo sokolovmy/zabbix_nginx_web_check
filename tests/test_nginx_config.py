@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from nginx_config import process_special_comments, get_server_names, get_listen, prepare_location, skip_on_return, \
+from znwclib.nginx_config import process_special_comments, get_server_names, get_listen, prepare_location, skip_on_return, \
     get_locations, process_servers, get_URLs_from_config
 
 
