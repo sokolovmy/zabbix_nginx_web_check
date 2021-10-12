@@ -6,6 +6,8 @@
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/venv" />
       <excludeFolder url="file://$MODULE_DIR$/venv.36" />
+      <excludeFolder url="file://$MODULE_DIR$/src/htmlcov" />
+      <excludeFolder url="file://$MODULE_DIR$/nginx-cfg" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.6 (nginx_web_check)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

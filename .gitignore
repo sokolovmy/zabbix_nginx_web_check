@@ -6,4 +6,4 @@ htmlcov
 htmlcov/*
 venv*
 .idea/*
-.idea
+
