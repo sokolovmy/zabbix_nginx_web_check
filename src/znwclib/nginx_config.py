@@ -1,11 +1,10 @@
-import os.path
 import re
-import sys
 from typing import Optional
 
 import crossplane
+import dns.exception
+import dns.resolver
 import validators
-import dns.resolver, dns.exception
 
 
 def process_special_comments(directives_list: list, hostname_var: str) -> dict:
@@ -353,7 +352,7 @@ def check_exist_host_name_dns(host_name):
 
 
 def get_URLs_from_config(config_file_name: str, hostname_var: str, default_port: int = 80,
-                         return_code: int = 399, skip_locations=False, dns_check=True):
+                         return_code: int = 399, skip_locations=False, dns_check=False):
 
     pl = crossplane.parse(config_file_name, comments=True, combine=True, ignore=('types', 'events',))
     config = pl['config'][0]['parsed']

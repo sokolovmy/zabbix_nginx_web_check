@@ -34,8 +34,8 @@ def parse_cmd_args(hostname=socket.gethostname(), port=80, return_code=399):
                              " Default value = " + str(port))
     parser.add_argument('-H', '--hostname', type=str, metavar='<hostname>', default=hostname,
                         help='Specify the hostname. Default is ' + hostname)
-    parser.add_argument('-n', '--no-check-dns', action='store_false',
-                        help='Do not check dns records for names in server_name directive')
+    parser.add_argument('-n', '--check-dns', action='store_true',
+                        help='Do Check dns records for names in server_name directive')
     return parser.parse_args()
 
 
@@ -47,7 +47,7 @@ if __name__ == '__main__':
         default_port=args.port,
         return_code=args.ret_code,
         skip_locations=args.skip_location,
-        dns_check=not args.no_check_dns
+        dns_check=args.check_dns
     )
     for_json = []
     for url in urls:
