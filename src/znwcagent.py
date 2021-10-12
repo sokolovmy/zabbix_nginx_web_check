@@ -51,7 +51,7 @@ if __name__ == '__main__':
     )
     for_json = []
     for url in urls:
-        url_dict = {'#URL': url}
+        url_dict = {'{#URL}': url}
         for_json.append(url_dict)
     print(json.dumps(for_json, indent=(2 if args.human else None)))
     # print(args)

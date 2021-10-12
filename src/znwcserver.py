@@ -1,10 +1,11 @@
+#!/usr/bin/python3
 import json
 import sys
 
 import requests
 
 if __name__ == '__main__':
-    if len(sys.argv) >= 1:
+    if len(sys.argv) > 1:
         url = sys.argv[1]
         try:
             res = requests.get(url)
