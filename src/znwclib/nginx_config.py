@@ -5,6 +5,7 @@ from typing import Optional
 
 import crossplane
 import validators
+import dns.resolver, dns.exception
 
 
 def process_special_comments(directives_list: list, hostname_var: str) -> dict:
@@ -343,8 +344,16 @@ def process_servers(html_block: list, hostname_var, default_port=80, return_code
     return ret_val
 
 
+def check_exist_host_name_dns(host_name):
+    try:
+        dns.resolver.resolve(host_name)
+        return True
+    except dns.exception.DNSException:
+        return False
+
+
 def get_URLs_from_config(config_file_name: str, hostname_var: str, default_port: int = 80,
-                         return_code: int = 399, skip_locations=False):
+                         return_code: int = 399, skip_locations=False, dns_check=True):
 
     pl = crossplane.parse(config_file_name, comments=True, combine=True, ignore=('types', 'events',))
     config = pl['config'][0]['parsed']
@@ -367,6 +376,8 @@ def get_URLs_from_config(config_file_name: str, hostname_var: str, default_port:
     for server in res:
         for listen in server['listens']:
             for server_name in server['server_names']:
+                if dns_check and not check_exist_host_name_dns(server_name):
+                    continue
                 server_name_url = listen[1] + '://' + server_name
                 if listen not in ((80, 'http'), (443, 'https')):
                     server_name_url += ':' + str(listen[0])

@@ -4,4 +4,4 @@ nginx-cfg
 __pycache__
 htmlcov
 htmlcov/*
-
+venv*

@@ -1,11 +1,17 @@
-import validators
-import re
+#import validators
+#import re
+import dns.resolver
 
 if __name__ == '__main__':
-    pat = re.compile(r'(^|:)(?P<port>\d+)$')
+    # pat = re.compile(r'(^|:)(?P<port>\d+)$')
     while True:
         validate = input("Enter string: ")
-        print(int(validate))
+        try:
+            res = dns.resolver.resolve(validate)
+            print(res.response)
+        except Exception as e:
+            print(e)
+        #print(int(validate))
         # print(len(validate))
         # res = pat.search(validate)
         # print(res)
