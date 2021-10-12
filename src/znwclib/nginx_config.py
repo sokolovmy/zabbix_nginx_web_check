@@ -95,7 +95,7 @@ def prep_server_name(name: str, special_comments: dict, single=False) -> Optiona
     return res
 
 
-def get_server_names(server_block: list, hostname_var: str, special_comments: dict = None) -> Optional[tuple[str, ...]]:
+def get_server_names(server_block: list, hostname_var: str, special_comments: dict = None):
     """
         check server_name directive & return tuple of server names
 
@@ -158,7 +158,7 @@ def get_server_names(server_block: list, hostname_var: str, special_comments: di
         return hostname_var,
 
 
-def get_listen(listen_args: list[str], default_port=80) -> tuple[int, str]:
+def get_listen(listen_args, default_port=80):
     """
         Обрабатывает аргумент директивы listen
 
@@ -183,7 +183,7 @@ def get_listen(listen_args: list[str], default_port=80) -> tuple[int, str]:
     return default_port, protocol,
 
 
-def get_all_listen_directives(server_block: list[dict], default_port=80) -> list[tuple[int, str]]:
+def get_all_listen_directives(server_block, default_port=80):
     # TODO: написать
     listens = []
     for d in server_block:
@@ -254,7 +254,7 @@ def skip_on_return(block: list, return_code) -> bool:
     return False
 
 
-def get_locations(server_block: list, hostname_var, return_code=399) -> list[str]:
+def get_locations(server_block: list, hostname_var, return_code=399):
     """
     Выдает список location's из блока server. Вложенные location's также.
     Не включаются в список, если return http code больше return_code
@@ -293,8 +293,7 @@ def get_locations(server_block: list, hostname_var, return_code=399) -> list[str
     return locations
 
 
-def process_servers(html_block: list, hostname_var, default_port=80, return_code=399, skip_locations=False) \
-        -> list[dict[str, tuple[str]]]:
+def process_servers(html_block: list, hostname_var, default_port=80, return_code=399, skip_locations=False):
     """
     Обрабатывает html block crossplane.parse. возвращает список словарей в котором лежат server_name's & location's
     Не включаются в список, если return http code больше return_code
@@ -345,7 +344,7 @@ def process_servers(html_block: list, hostname_var, default_port=80, return_code
 
 
 def get_URLs_from_config(config_file_name: str, hostname_var: str, default_port: int = 80,
-                         return_code: int = 399, skip_locations=False) -> Optional[list[str]]:
+                         return_code: int = 399, skip_locations=False):
 
     pl = crossplane.parse(config_file_name, comments=True, combine=True, ignore=('types', 'events',))
     config = pl['config'][0]['parsed']

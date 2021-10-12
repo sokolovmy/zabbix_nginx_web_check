@@ -27,19 +27,23 @@ class TestNginxConfig(TestCase):
         }
         self.dir_server_comments_replace_all = [
                                                    {'directive': '#', 'comment': 'replace_all: hbz.ru'},
-                                               ] + self.dir_server_comments
+                                               ]
+        self.dir_server_comments_replace_all.extend(self.dir_server_comments)
 
         self.test_comments_result_replace_all = {
                                                     'replace_all': ('hbz.ru',),
-                                                } | self.test_comments_result
+                                                }
+        self.test_comments_result_replace_all.update(self.test_comments_result)
 
         self.dir_server_comments_skip_this = [
                                                  {'directive': '#', 'comment': ' skip_this: True'},
-                                             ] + self.dir_server_comments
+                                             ]
+        self.dir_server_comments_skip_this.extend(self.dir_server_comments)
 
         self.test_comments_result_skip_this = {
                                                   'skip_this': True,
-                                              } | self.test_comments_result
+                                              }
+        self.test_comments_result_skip_this.update(self.test_comments_result)
 
     def test_process_special_comments(self):
         self.assertEqual(
