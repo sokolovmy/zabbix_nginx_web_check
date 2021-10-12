@@ -1,6 +1,7 @@
 from unittest import TestCase
 
-from znwclib.nginx_config import process_special_comments, get_server_names, get_listen, prepare_location, skip_on_return, \
+from znwclib.nginx_config import process_special_comments, get_server_names, get_listen, prepare_location, \
+    skip_on_return, \
     get_locations, process_servers, get_URLs_from_config
 
 
@@ -317,7 +318,7 @@ class TestNginxConfig(TestCase):
     def test_get_urls_from_config(self):
         self.assertEqual(
             config_res,
-            get_URLs_from_config('./nginx.conf', 'h.domain.com')
+            get_URLs_from_config('./nginx.conf', 'h.domain.com', dns_check=False)
         )
 
     def test_get_urls_file_not_found(self):
@@ -329,7 +330,7 @@ class TestNginxConfig(TestCase):
     def test_get_urls_file_config2(self):
         self.assertEqual(
             config_res2,
-            get_URLs_from_config('nginx2.conf', 'h.domain.com')
+            get_URLs_from_config('nginx2.conf', 'h.domain.com', dns_check=False)
         )
 
     def test_get_urls_file_config3(self):
@@ -342,13 +343,13 @@ class TestNginxConfig(TestCase):
              'https://www.haulmont.com/forms',
              'https://www.haulmont.ru',
              'https://www.haulmont.ru/sites/default/files/webform/cv-ru'],
-            get_URLs_from_config('nginx2.conf', 'h.domain.com', 80, 300)
+            get_URLs_from_config('nginx2.conf', 'h.domain.com', 80, 300, dns_check=False)
         )
 
     def test_get_urls_file_config4(self):
         self.assertEqual(
             ['http://hbz.ru', 'https://www.haulmont.com', 'https://www.haulmont.ru'],
-            get_URLs_from_config('nginx2.conf', 'h.domain.com', 80, 300, True)
+            get_URLs_from_config('nginx2.conf', 'h.domain.com', 80, 300, True, dns_check=False)
         )
 
 

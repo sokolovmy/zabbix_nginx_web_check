@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a44da9ea-e25e-4b98-bcf5-ce4cbb3856a3" name="Changes" comment="remove .idea">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_nginx_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_nginx_config.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,7 +50,7 @@
       <recent name="C:\Github\nginx_web_check\src\zbx_nginx_web_check" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.znwcserver">
+  <component name="RunManager" selected="Python tests.Unittests in tests">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="nginx_web_check" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -313,7 +313,14 @@
       <option name="project" value="LOCAL" />
       <updated>1634044909638</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="remove .idea">
+      <created>1634045510949</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1634045510949</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
