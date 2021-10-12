@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a44da9ea-e25e-4b98-bcf5-ce4cbb3856a3" name="Changes" comment="prj change to allow run with python3.6">
-      <change afterPath="$PROJECT_DIR$/src/znwcserver.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="a44da9ea-e25e-4b98-bcf5-ce4cbb3856a3" name="Changes" comment="added dns check to nginx_config.py">
+      <change afterPath="$PROJECT_DIR$/requirements-server.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/nginx_web_check.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/nginx_web_check.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nginx.conf" beforeDir="false" afterPath="$PROJECT_DIR$/src/nginx.conf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/znwcagent.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/znwcagent.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/znwclib/nginx_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/znwclib/nginx_config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/znwcserver.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/znwcserver.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,7 +52,7 @@
       <recent name="C:\Github\nginx_web_check\src\zbx_nginx_web_check" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.znwcagent">
+  <component name="RunManager" selected="Python.znwcserver">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="nginx_web_check" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -169,9 +167,9 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.znwcserver" />
         <item itemvalue="Python.znwcagent" />
         <item itemvalue="Python.main" />
-        <item itemvalue="Python.znwcserver" />
       </list>
     </recent_temporary>
   </component>
@@ -289,7 +287,14 @@
       <option name="project" value="LOCAL" />
       <updated>1634020288509</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="added dns check to nginx_config.py">
+      <created>1634036756071</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1634036756071</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -320,7 +325,8 @@
     <MESSAGE value="added znwcagent.py" />
     <MESSAGE value="added znwcagent.conf - zabbix_agent configuration file" />
     <MESSAGE value="prj change to allow run with python3.6" />
-    <option name="LAST_COMMIT_MESSAGE" value="prj change to allow run with python3.6" />
+    <MESSAGE value="added dns check to nginx_config.py" />
+    <option name="LAST_COMMIT_MESSAGE" value="added dns check to nginx_config.py" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -330,17 +336,14 @@
           <line>22</line>
           <option name="timeStamp" value="9" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/znwcserver.py</url>
-          <line>9</line>
-          <option name="timeStamp" value="33" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/znwcserver.py</url>
-          <line>8</line>
-          <option name="timeStamp" value="37" />
-        </line-breakpoint>
       </breakpoints>
+      <default-breakpoints>
+        <breakpoint type="python-exception">
+          <properties notifyOnTerminate="true" exception="BaseException">
+            <option name="notifyOnTerminate" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
     </breakpoint-manager>
     <watches-manager>
       <configuration name="tests">
@@ -350,7 +353,8 @@
         <watch expression="urls" language="Python" />
       </configuration>
       <configuration name="PythonConfigurationType">
-        <watch expression="args.no_check_dns" language="Python" />
+        <watch expression="m['raw']" language="Python" />
+        <watch expression="len(m['text'])" language="Python" />
       </configuration>
     </watches-manager>
   </component>

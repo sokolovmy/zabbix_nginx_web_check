@@ -10,6 +10,10 @@
     <orderEntry type="jdk" jdkName="Python 3.6 (nginx_web_check)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
+  <component name="PackageRequirementsSettings">
+    <option name="requirementsPath" value="requirements-server.txt" />
+    <option name="removeUnused" value="true" />
+  </component>
   <component name="TestRunnerService">
     <option name="PROJECT_TEST_RUNNER" value="Unittests" />
   </component>

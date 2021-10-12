@@ -1,3 +1,3 @@
-crossplane==0.5.7
-validators==0.18.2
-argparse
+crossplane~=0.5.7
+validators~=0.18.2
+argparse~=1.4.0
