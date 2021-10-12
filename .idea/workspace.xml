@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a44da9ea-e25e-4b98-bcf5-ce4cbb3856a3" name="Changes" comment="get_urls...4">
-      <change afterPath="$PROJECT_DIR$/src/znwcagent.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/znwclib/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/nginx_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/znwclib/nginx_config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_nginx_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_nginx_config.py" afterDir="false" />
+    <list default="true" id="a44da9ea-e25e-4b98-bcf5-ce4cbb3856a3" name="Changes" comment="added znwcagent.py">
+      <change afterPath="$PROJECT_DIR$/etc/znwcagent.conf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/nginx.conf" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -285,7 +282,14 @@
       <option name="project" value="LOCAL" />
       <updated>1633957057483</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="added znwcagent.py">
+      <created>1634017946561</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1634017946561</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -313,7 +317,8 @@
     <MESSAGE value="get_urls...2" />
     <MESSAGE value="get_urls...3" />
     <MESSAGE value="get_urls...4" />
-    <option name="LAST_COMMIT_MESSAGE" value="get_urls...4" />
+    <MESSAGE value="added znwcagent.py" />
+    <option name="LAST_COMMIT_MESSAGE" value="added znwcagent.py" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
