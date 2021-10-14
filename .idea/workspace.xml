@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a44da9ea-e25e-4b98-bcf5-ce4cbb3856a3" name="Changes" comment="update znwcagent.py&#10;update znwcserver.py">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/znwcagent.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/znwcagent.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/znwclib/nginx_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/znwclib/nginx_config.py" afterDir="false" />
-    </list>
+    <list default="true" id="a44da9ea-e25e-4b98-bcf5-ce4cbb3856a3" name="Changes" comment="change dns key" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -342,7 +338,14 @@
       <option name="project" value="LOCAL" />
       <updated>1634048785361</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="change dns key">
+      <created>1634054366578</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1634054366578</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -378,7 +381,8 @@
     <MESSAGE value="remove .idea" />
     <MESSAGE value="update requriments.txt" />
     <MESSAGE value="update znwcagent.py&#10;update znwcserver.py" />
-    <option name="LAST_COMMIT_MESSAGE" value="update znwcagent.py&#10;update znwcserver.py" />
+    <MESSAGE value="change dns key" />
+    <option name="LAST_COMMIT_MESSAGE" value="change dns key" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
