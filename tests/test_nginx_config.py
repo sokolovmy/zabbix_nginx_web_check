@@ -1,3 +1,4 @@
+from collections import ChainMap
 from unittest import TestCase
 
 from znwclib.nginx_config import process_special_comments, get_server_names, get_listen, prepare_location, \
@@ -27,24 +28,24 @@ class TestNginxConfig(TestCase):
             }
         }
         self.dir_server_comments_replace_all = [
-                                                   {'directive': '#', 'comment': 'replace_all: hbz.ru'},
-                                               ]
+            {'directive': '#', 'comment': 'replace_all: hbz.ru'},
+        ]
         self.dir_server_comments_replace_all.extend(self.dir_server_comments)
 
-        self.test_comments_result_replace_all = {
-                                                    'replace_all': ['hbz.ru'],
-                                                }
-        self.test_comments_result_replace_all.update(self.test_comments_result)
+        self.test_comments_result_replace_all = ChainMap(
+            self.test_comments_result,
+            {'replace_all': ['hbz.ru']}
+        )
 
         self.dir_server_comments_skip_this = [
-                                                 {'directive': '#', 'comment': ' skip_this: True'},
-                                             ]
+            {'directive': '#', 'comment': ' skip_this: True'},
+        ]
         self.dir_server_comments_skip_this.extend(self.dir_server_comments)
 
-        self.test_comments_result_skip_this = {
-                                                  'skip_this': True,
-                                              }
-        self.test_comments_result_skip_this.update(self.test_comments_result)
+        self.test_comments_result_skip_this = ChainMap(
+            {'skip_this': True},
+            self.test_comments_result
+        )
 
     def test_process_special_comments(self):
         self.assertEqual(
@@ -69,19 +70,19 @@ class TestNginxConfig(TestCase):
 
     def test_get_server_names_single_start_dot(self):
         self.assertEqual(
-            ('example.ru',),
+            ['example.ru'],
             get_server_names([{'directive': 'server_name', 'args': ['.example.ru']}], ''),
         )
 
     def test_get_server_names_single_empty_name(self):
         self.assertEqual(
-            ('test.hostname.org',),
+            ['test.hostname.org'],
             get_server_names([{'directive': 'server_name', 'args': ['']}], 'test.hostname.org'),
         )
 
     def test_get_server_names_single_empty_name2(self):
         self.assertEqual(
-            ('h.domain.com',),
+            ['h.domain.com'],
             get_server_names(
                 [
                     {'directive': 'server_name', 'args': ['']},
@@ -93,48 +94,49 @@ class TestNginxConfig(TestCase):
 
     def test_get_server_names_single_empty_name3(self):
         self.assertEqual(
-            ('t.hostname.org',),
+            ['t.hostname.org'],
             get_server_names([], 't.hostname.org'),
         )
 
     def test_get_server_names(self):
+        # noinspection PyTypeChecker
         self.assertEqual(
-            ('test.ru', 'www.example.net'),
-            get_server_names(
-                [
-                    {'directive': 'server_name', 'args': ['test.ru', 'www.test.*', '', '_', '*', '*.example.net']}
-                ] + self.dir_server_comments,
-                'test.hostname.org'),
+            ['test.ru', 'www.example.net', 'www.test.ru'],
+            sorted(get_server_names(
+                self.dir_server_comments +
+                [{'directive': 'server_name', 'args': {'test.ru', 'www.test.*', '', '_', '*', '*.example.net'}}],
+                hostname_var='test.hostname.org')
+            ),
         )
 
+    # noinspection PyTypeChecker
     def test_get_server_names_skip_this(self):
         self.assertEqual(
             None,
             get_server_names(
-                [
-                    {'directive': 'server_name', 'args': ['test.ru', 'www.test.*', '', '_', '*', '*.example.net']}
-                ] + self.dir_server_comments_skip_this,
+                self.dir_server_comments_skip_this +
+                [{'directive': 'server_name', 'args': ['test.ru', 'www.test.*', '', '_', '*', '*.example.net']}],
                 'test.hostname.org'),
         )
 
+    # noinspection PyTypeChecker
     def test_get_server_names_replace_all(self):
         self.assertEqual(
             ['hbz.ru'],
             get_server_names(
-                [
-                    {'directive': 'server_name', 'args': ['test.ru', 'www.test.*', '', '_', '*', '*.example.net']}
-                ] + self.dir_server_comments_replace_all,
+                self.dir_server_comments_replace_all +
+                [{'directive': 'server_name', 'args': ['test.ru', 'www.test.*', '', '_', '*', '*.example.net']}],
                 'test.hostname.org'),
         )
 
+    # noinspection PyTypeChecker
     def test_get_server_names_vars(self):
         self.assertEqual(
-            ('test.hbz_value', 'www.example.net'),
-            get_server_names(
-                [
-                    {'directive': 'server_name', 'args': ['test.$hbz_var', 'www.test.*', '', '_', '*', '*.example.net']}
-                ] + self.dir_server_comments,
-                'test.hostname.org'),
+            ['test.hbz_value', 'www.example.net', 'www.test.ru'],
+            sorted(get_server_names(
+                self.dir_server_comments +
+                [{'directive': 'server_name', 'args': ['test.$hbz_var', 'www.test.*', '', '_', '*', '*.example.net']}],
+                'test.hostname.org')),
         )
 
     def test_get_listen(self):
@@ -336,20 +338,20 @@ class TestNginxConfig(TestCase):
     def test_get_urls_file_config3(self):
         self.assertEqual(
             ['http://hbz.ru',
-             'http://hbz.ru/hbz',
              'http://hbz.ru/equal',
+             'http://hbz.ru/hbz',
              'http://hbz.ru/ifequal_not_check_regexpr',
              'https://www.haulmont.com',
              'https://www.haulmont.com/forms',
              'https://www.haulmont.ru',
              'https://www.haulmont.ru/sites/default/files/webform/cv-ru'],
-            get_URLs_from_config('nginx2.conf', 'h.domain.com', 80, 300, dns_check=False)
+            sorted(get_URLs_from_config('nginx2.conf', 'h.domain.com', 80, 300, dns_check=False))
         )
 
     def test_get_urls_file_config4(self):
         self.assertEqual(
             ['http://hbz.ru', 'https://www.haulmont.com', 'https://www.haulmont.ru'],
-            get_URLs_from_config('nginx2.conf', 'h.domain.com', 80, 300, True, dns_check=False)
+            sorted(get_URLs_from_config('nginx2.conf', 'h.domain.com', 80, 300, True, dns_check=False))
         )
 
 
@@ -428,21 +430,21 @@ servers0 = [
 servers_answer = [
     {'listens': [(80, 'http')], 'locations': [], 'server_names': ['hbz.ru']},
     {'listens': [(80, 'http')], 'locations': [],
-     'server_names': (
+     'server_names': [
          'www.haulmont.com', 'haulmont.dev', 'www.haulmont.dev', 'haulmont.tech', 'haulmont.com', 'www.haulmont.tech',
          'haulmont.org', 'www.haulmont.org', 'haulmont.net', 'www.haulmont.net', 'haulmont-technology.ru',
          'www.haulmont-technology.ru', 'haulmont-technology.com', 'www.haulmont-technology.com',
          'haulmont.co.uk', 'www.haulmont.co.uk', 'haulmont-technology.co.uk', 'www.haulmont-technology.co.uk'
-     )},
-    {'listens': [(443, 'https')], 'locations': [], 'server_names': ('haulmont.com',)},
-    {'listens': [(443, 'https')], 'locations': [], 'server_names': ('haulmont.dev', 'www.haulmont.dev')},
-    {'listens': [(443, 'https')], 'locations': ['/', '/forms'], 'server_names': ('www.haulmont.com',)},
-    {'listens': [(80, 'http')], 'locations': [], 'server_names': ('www.haulmont.ru', 'haulmont.ru')},
-    {'listens': [(443, 'https')], 'locations': [], 'server_names': ('haulmont.ru',)},
+     ]},
+    {'listens': [(443, 'https')], 'locations': [], 'server_names': ['haulmont.com',]},
+    {'listens': [(443, 'https')], 'locations': [], 'server_names': ['haulmont.dev', 'www.haulmont.dev']},
+    {'listens': [(443, 'https')], 'locations': ['/', '/forms'], 'server_names': ['www.haulmont.com',]},
+    {'listens': [(80, 'http')], 'locations': [], 'server_names': ['www.haulmont.ru', 'haulmont.ru']},
+    {'listens': [(443, 'https')], 'locations': [], 'server_names': ['haulmont.ru',]},
     {
         'listens': [(443, 'https')],
         'locations': ['/sites/default/files/webform/cv-ru', '/'],
-        'server_names': ('www.haulmont.ru',)
+        'server_names': ['www.haulmont.ru',]
     }
 ]
 

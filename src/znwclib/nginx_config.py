@@ -1,10 +1,14 @@
 import re
-from typing import Optional
+from typing import Optional, Union
 
 import crossplane
 import dns.exception
 import dns.resolver
 import validators
+
+_re_patt_port = re.compile(r"^\s*([^:]+):\s+(.+)$")
+_re_patt_assignment = re.compile(r"^\s*(.+)\s+=\s+(.+)$")
+_re_patt_split = re.compile(r"[\s,]+")
 
 
 def process_special_comments(directives_list: list, hostname_var: str) -> dict:
@@ -21,35 +25,30 @@ def process_special_comments(directives_list: list, hostname_var: str) -> dict:
     """
     replaces = {}
     variables = {
-            '$hostname': hostname_var
-        }
+        '$hostname': hostname_var
+    }
     res = {
         'replace': replaces,
         'var': variables
         # 'replace_all': str - appear if it's founded
         # 'skip_this': True - appear if it's founded
     }
-    patt = re.compile(r"^\s*([^:]+):\s+(.+)$")
-    patt_eq = re.compile(r"^\s*(.+)\s+=\s+(.+)$")
-    patt_split = re.compile(r"[\s,]+")
-    for i in directives_list:
-        directive = i.get('directive')
-        if directive and directive == '#':
-            comment = i.get('comment')
-            m = patt.match(comment)
+    for directive in directives_list:
+        if directive.get('directive', '') == '#':
+            m = _re_patt_port.match(directive['comment'])
             if m:
                 cmd, cmd_val = m.group(1, 2)
                 if cmd == 'skip_this' and cmd_val == 'True':
                     res['skip_this'] = True
                 if cmd == 'replace_all':
-                    res['replace_all'] = patt_split.split(cmd_val)
+                    res['replace_all'] = _re_patt_split.split(cmd_val)
                 elif cmd == 'replace':
-                    m = patt_eq.match(cmd_val)
+                    m = _re_patt_assignment.match(cmd_val)
                     if m:
                         key, val = m.group(1, 2)
-                        replaces[key] = patt_split.split(val)
+                        replaces[key] = _re_patt_split.split(val)
                 elif cmd == 'var':
-                    m = patt_eq.match(cmd_val)
+                    m = _re_patt_assignment.match(cmd_val)
                     if m:
                         key, val = m.group(1, 2)
                         variables[key] = val
@@ -70,7 +69,7 @@ def prep_name_var(name: str, special_comments: dict) -> str:
     return name
 
 
-def prep_server_name(name: str, special_comments: dict, single=False) -> Optional[str]:
+def prep_server_name(name: str, special_comments: dict, single=False) -> Union[str, list, None]:
     """
     Обрабатывает имя сервера используя словарь специальных комментариев
     см. функции get_server_name
@@ -80,24 +79,24 @@ def prep_server_name(name: str, special_comments: dict, single=False) -> Optiona
     :return:
     """
 
-    res = special_comments.get(name)
-    if res is None:
-        name = prep_name_var(name, special_comments)
-        len_name = len(name)
-        if len_name == 0 and single:
-            res = special_comments['var']['$hostname']
-        elif len_name > 2 and name[0] == '*' and name[1] == '.' and validators.domain(name[2:]):
-            res = f"www{name[1:]}"
-        elif len_name > 1 and name[0] == '.' and validators.domain(name[1:]):
-            res = name[1:]
-        elif validators.domain(name):
-            res = name
-        else:
-            res = None
-    return res
+    res = special_comments['replace'].get(name, [])
+    res = [n for n in res if validators.domain(n)]
+    if res:
+        return res
+
+    name = prep_name_var(name, special_comments)
+    if len(name) == 0 and single:
+        return special_comments['var']['$hostname']
+
+    if name.startswith('*.'):
+        name = f"www{name[1:]}"
+    elif name.startswith('.'):
+        name = name[1:]
+
+    return name if validators.domain(name) else None
 
 
-def get_server_names(server_block: list, hostname_var: str, special_comments: dict = None):
+def get_server_names(server_block: list, hostname_var: str, special_comments: dict = None) -> Optional[list]:
     """
         check server_name directive & return tuple of server names
 
@@ -134,7 +133,7 @@ def get_server_names(server_block: list, hostname_var: str, special_comments: di
     :param hostname_var: $hostname
     :returns возвращает кортеж имен из директивы server_name
     """
-
+    # TODO продолжить ревьювить
     server_names = []
     if special_comments is None:
         special_comments = process_special_comments(server_block, hostname_var)
@@ -142,22 +141,24 @@ def get_server_names(server_block: list, hostname_var: str, special_comments: di
     if special_comments.get('skip_this'):
         return None
     elif special_comments.get('replace_all'):
+        # TODO сюда возможно нужно вставить проверку правильности имен
         return special_comments['replace_all']
 
-    for i in server_block:
-        d = i.get('directive')
-        if d and d == 'server_name':
-            args = i['args']
+    for directive in server_block:
+        if directive.get('directive', '') == 'server_name':
+            args = directive['args']
             if args:
                 single = len(args) == 1
                 for arg in args:
                     server_name = prep_server_name(arg, special_comments, single)
                     if server_name:
-                        server_names.append(server_name)
-    if len(server_names):
-        return tuple(server_names)
-    else:
-        return hostname_var,
+                        if isinstance(server_name, str):
+                            server_names.append(server_name)
+                        else:
+                            server_names.extend(server_name)
+    # make unique, not fast but works
+    server_names = list(dict.fromkeys(server_names))
+    return server_names if server_names else [hostname_var]
 
 
 def check_ssl_on(server_block: list):
@@ -417,8 +418,8 @@ def get_URLs_from_config(config_file_name: str, hostname_var: str, default_port:
     if http_block is None:
         # something wrong
         return "Error: something wrong"
-#    if debug:
-#       delFileLine(http_block)
+    #    if debug:
+    #       delFileLine(http_block)
     res = process_servers(http_block, hostname_var, default_port, return_code, skip_locations, debug=debug)
     # servers0_answer = [{
     #         'locations': ['/hbz', '/equal', '/if_equal_not_check_regexpr', '/namedLocation/to/hbz_value'],
