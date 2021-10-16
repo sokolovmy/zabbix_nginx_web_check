@@ -17,9 +17,9 @@ class TestNginxConfig(TestCase):
         ]
         self.test_comments_result = {
             'replace': {
-                'www.test.*': ('www.test.ru',),
-                '~^www\..+\.example\.org$': ('www.test.example.org',),
-                'multi.example.org': ('www.test.ru', 'test.ru',)
+                'www.test.*': ['www.test.ru'],
+                '~^www\..+\.example\.org$': ['www.test.example.org'],
+                'multi.example.org': ['www.test.ru', 'test.ru']
             },
             'var': {
                 '$hbz_var': 'hbz_value',
@@ -32,7 +32,7 @@ class TestNginxConfig(TestCase):
         self.dir_server_comments_replace_all.extend(self.dir_server_comments)
 
         self.test_comments_result_replace_all = {
-                                                    'replace_all': ('hbz.ru',),
+                                                    'replace_all': ['hbz.ru'],
                                                 }
         self.test_comments_result_replace_all.update(self.test_comments_result)
 
@@ -119,7 +119,7 @@ class TestNginxConfig(TestCase):
 
     def test_get_server_names_replace_all(self):
         self.assertEqual(
-            ('hbz.ru',),
+            ['hbz.ru'],
             get_server_names(
                 [
                     {'directive': 'server_name', 'args': ['test.ru', 'www.test.*', '', '_', '*', '*.example.net']}
@@ -185,11 +185,11 @@ class TestNginxConfig(TestCase):
     def test_prepare_location_check_unsupported(self):
         self.assertEqual(
             None,
-            prepare_location(['~\kjhguyt$'], {})
+            prepare_location(['~\kg_am$'], {})
         )
         self.assertEqual(
             None,
-            prepare_location(['~*jytrhfljhg'], {})
+            prepare_location(['~*kg_am2'], {})
         )
         self.assertEqual(
             None,
@@ -276,10 +276,10 @@ class TestNginxConfig(TestCase):
 
     def test_get_locations(self):
         self.assertEqual(
-            ['/var/asdf/my.host.name', '/named_location', '/', '/hbz', '/hbz/hbz', '/1/2/4'],
+            ['/var/qwe/my.host.name', '/named_location', '/', '/hbz', '/hbz/hbz', '/1/2/4'],
             get_locations([
                 {'directive': 'location', 'args': ['/var/$qwe$hostname'], 'block': [
-                    {'directive': '#', 'comment': ' var: $qwe = asdf/'}
+                    {'directive': '#', 'comment': ' var: $qwe = qwe/'}
                 ]},
                 {'directive': 'location', 'args': ['skipped'], 'block': [
                     {'directive': '#', 'comment': ' skip_this: True'}
@@ -290,7 +290,7 @@ class TestNginxConfig(TestCase):
                 {'directive': 'location', 'args': ['/'], 'block': []},
                 {'directive': 'location', 'args': ['/hbz'], 'block': [
                     {'directive': 'location', 'args': ['/hbz/hbz'], 'block': []},
-                    {'directive': 'location', 'args': ['/hbz/gubz'], 'block': [
+                    {'directive': 'location', 'args': ['/hbz/test1'], 'block': [
                         {'directive': 'return', 'args': ['400']}
                     ]}
                 ]},
@@ -323,14 +323,14 @@ class TestNginxConfig(TestCase):
 
     def test_get_urls_file_not_found(self):
         self.assertEqual(
-            None,
-            get_URLs_from_config('nonexistent.conf', 'h.domain.com')
+            "Error: [Errno 2] No such file or directory: './nonexistent.conf'",
+            get_URLs_from_config('./nonexistent.conf', 'h.domain.com')
         )
 
     def test_get_urls_file_config2(self):
         self.assertEqual(
             config_res2,
-            get_URLs_from_config('nginx2.conf', 'h.domain.com', dns_check=False)
+            get_URLs_from_config('./nginx2.conf', 'h.domain.com', dns_check=False)
         )
 
     def test_get_urls_file_config3(self):
@@ -395,15 +395,15 @@ config_res2 = ['http://hbz.ru',
 
 servers0_answer = [
     {
-        'locations': ['/', 'incorrect_location/', '/hbz', '/equal', '/ifequal_not_check_regexpr',
+        'locations': ['/', 'incorrect_location/', '/hbz', '/equal', '/if_equal_not_check_regexpr',
                       '/namedLocation/to/hbz_value'],
-        'server_names': ('hbz.ru',),
+        'server_names': ['hbz.ru'],
         'listens': [(80, 'http')],
     }
 ]
 servers0 = [
     {'directive': 'server', 'block': [
-        {'args': ['test.ru', 'www.test.*', '', '_', '*', '*.exmaple.net'], 'directive': 'server_name', 'line': 4},
+        {'args': ['test.ru', 'www.test.*', '', '_', '*', '*.example.net'], 'directive': 'server_name', 'line': 4},
         {'args': [], 'comment': ' replace: www.test.* = www.test.ru', 'directive': '#', 'line': 5},
         {'args': [], 'comment': ' replace_all: hbz.ru', 'directive': '#', 'line': 6},
         {'args': [], 'comment': ' var: $hbz_var = hbz_value', 'directive': '#', 'line': 7},
@@ -413,8 +413,8 @@ servers0 = [
         {'args': ['/hbz'], 'block': [], 'directive': 'location', 'line': 9},
         {'args': ['=', '/equal'], 'block': [], 'directive': 'location', 'line': 11},
         {'args': ['~', '/regexpr'], 'block': [], 'directive': 'location', 'line': 13},
-        {'args': ['~*', '/CaseInsentiveRegexpr'], 'block': [], 'directive': 'location', 'line': 15},
-        {'args': ['^~', '/ifequal_not_check_regexpr'], 'block': [], 'directive': 'location', 'line': 17},
+        {'args': ['~*', '/CaseInsensitiveRegexpr'], 'block': [], 'directive': 'location', 'line': 15},
+        {'args': ['^~', '/if_equal_not_check_regexpr'], 'block': [], 'directive': 'location', 'line': 17},
         {'args': ['@NamedLocation'], 'directive': 'location', 'line': 19, 'block': [
             {'comment': ' var: @NamedLocation = /namedLocation/to/hbz_value', 'directive': '#'},
         ]}
@@ -426,7 +426,7 @@ servers0 = [
 ]
 
 servers_answer = [
-    {'listens': [(80, 'http')], 'locations': [], 'server_names': ('hbz.ru',)},
+    {'listens': [(80, 'http')], 'locations': [], 'server_names': ['hbz.ru']},
     {'listens': [(80, 'http')], 'locations': [],
      'server_names': (
          'www.haulmont.com', 'haulmont.dev', 'www.haulmont.dev', 'haulmont.tech', 'haulmont.com', 'www.haulmont.tech',
@@ -448,7 +448,7 @@ servers_answer = [
 
 servers = [
     {'directive': 'server', 'block': [
-        {'directive': 'server_name', 'line': 4, 'args': ['test.ru', 'www.test.*', '', '_', '*', '*.exmaple.net']},
+        {'directive': 'server_name', 'line': 4, 'args': ['test.ru', 'www.test.*', '', '_', '*', '*.example.net']},
         {'directive': '#', 'line': 5, 'args': [], 'comment': ' replace: www.test.* = www.test.ru'},
         {'directive': '#', 'line': 6, 'args': [], 'comment': ' replace_all: hbz.ru'},
         {'directive': '#', 'line': 7, 'args': [], 'comment': ' var: $hbz_var = hbz_value'},

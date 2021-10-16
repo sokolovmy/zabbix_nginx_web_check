@@ -19,11 +19,13 @@ def process_special_comments(directives_list: list, hostname_var: str) -> dict:
     :param directives_list:  - список директив в {}
     :rtype: dictionary
     """
-    res = {
-        'replace': dict(),
-        'var': {
+    replaces = {}
+    variables = {
             '$hostname': hostname_var
-        },
+        }
+    res = {
+        'replace': replaces,
+        'var': variables
         # 'replace_all': str - appear if it's founded
         # 'skip_this': True - appear if it's founded
     }
@@ -40,17 +42,17 @@ def process_special_comments(directives_list: list, hostname_var: str) -> dict:
                 if cmd == 'skip_this' and cmd_val == 'True':
                     res['skip_this'] = True
                 if cmd == 'replace_all':
-                    res['replace_all'] = tuple(patt_split.split(cmd_val))
+                    res['replace_all'] = patt_split.split(cmd_val)
                 elif cmd == 'replace':
                     m = patt_eq.match(cmd_val)
                     if m:
                         key, val = m.group(1, 2)
-                        res['replace'][key] = tuple(patt_split.split(val))
+                        replaces[key] = patt_split.split(val)
                 elif cmd == 'var':
                     m = patt_eq.match(cmd_val)
                     if m:
                         key, val = m.group(1, 2)
-                        res['var'][key] = val
+                        variables[key] = val
     return res
 
 
@@ -158,16 +160,35 @@ def get_server_names(server_block: list, hostname_var: str, special_comments: di
         return hostname_var,
 
 
-def get_listen(listen_args, default_port=80):
+def check_ssl_on(server_block: list):
     """
-        Обрабатывает аргумент директивы listen
+        checks deprecated directive ssl on|off
+        need check on http, server block
+    :param server_block:
+    :return: True  - if ssl on | False if not found or ssl off;
+    """
+    for d in server_block:
+        dd = d['directive']
+        if dd == 'ssl':
+            da = d['args']
+            if 'on' in da:
+                return True
+    return False
 
+
+def get_listen(listen_args, default_port=80, server_ssl_on=False):
+    """
+    Обрабатывает аргумент директивы listen
+
+    :param server_ssl_on: deprecated directive ssl on|off on http & server blocks, but still using
     :param default_port: порт по умолчанию nginx (если под root 80, если нет 8000)
     :param listen_args список аргументов директивы listen
     :return (<номер порта>, <(http|https)>)
     """
+    # TODO: написать test for ssl_on
     patt_port = re.compile(r"(^|:)(?P<port>\d+)$")
-    protocol = 'http'
+    protocol = 'https' if server_ssl_on else 'http'
+    port = default_port
     for arg in listen_args:
         if arg.lower() == 'ssl':
             protocol = 'https'
@@ -177,18 +198,28 @@ def get_listen(listen_args, default_port=80):
         else:
             res = patt_port.search(arg)
             if res:
-                default_port = res.group('port')
-            default_port = int(default_port)
+                port = int(res.group('port'))
+                # bellow dirty hack. may be wrong may be true
+                # 443 порт without ssl directive
+                if port == 443:
+                    protocol = 'https'
 
-    return default_port, protocol,
+    return port, protocol,
 
 
-def get_all_listen_directives(server_block, default_port=80):
-    # TODO: написать
+def get_all_listen_directives(server_block, default_port=80, server_ssl_on=False):
+    """
+
+    :param server_block:
+    :param default_port:
+    :param server_ssl_on: deprecated directive ssl on|off on http & server blocks, but still using
+    :return: list[tuple[int, str]]
+    """
+
     listens = []
     for d in server_block:
         if d['directive'].lower() == 'listen':
-            listens.append(get_listen(d['args'], default_port))
+            listens.append(get_listen(d['args'], default_port, server_ssl_on))
 
     return listens
 
@@ -254,7 +285,7 @@ def skip_on_return(block: list, return_code) -> bool:
     return False
 
 
-def get_locations(server_block: list, hostname_var, return_code=399):
+def get_locations(server_block: list, hostname_var, return_code=399) -> list:
     """
     Выдает список location's из блока server. Вложенные location's также.
     Не включаются в список, если return http code больше return_code
@@ -274,7 +305,7 @@ def get_locations(server_block: list, hostname_var, return_code=399):
     :param return_code:
     :return:
     """
-    locations: list[str] = []
+    locations: list = []
     for d in server_block:
         dd = d['directive'].lower()
         if dd == 'location':
@@ -286,14 +317,28 @@ def get_locations(server_block: list, hostname_var, return_code=399):
             location = prepare_location(da, special_comments)
             if location:
                 locations.append(location)
-            nested_locations = get_locations(db, hostname_var, return_code)
-            if len(nested_locations):
+            nested_locations: list = get_locations(db, hostname_var, return_code)
+            if nested_locations:
                 locations.extend(nested_locations)
 
     return locations
 
 
-def process_servers(html_block: list, hostname_var, default_port=80, return_code=399, skip_locations=False):
+def delFileLine(block: list):
+    """
+    for debug deleting file & line from directives dict
+    :param block:
+    :return:
+    """
+    for directive in block:
+        directive.pop('file', None)
+        directive.pop('line', None)
+        if directive.get('block'):
+            delFileLine(directive['block'])
+
+
+def process_servers(html_block: list, hostname_var, default_port=80, return_code=399, skip_locations=False,
+                    debug=False):
     """
     Обрабатывает html block crossplane.parse. возвращает список словарей в котором лежат server_name's & location's
     Не включаются в список, если return http code больше return_code
@@ -314,6 +359,8 @@ def process_servers(html_block: list, hostname_var, default_port=80, return_code
           - ~^www\..+\.example\.org$ - все регулярные выражения также будут удаляться.
           - "" - удаляется, если значение не является единственным в списке, в противном случае заменяется на $hostname
           - имена *, _, --, !@# и другие некорректные имена удаляются из списка
+
+    :param debug: for debug purposes
     :param skip_locations: не обрабатывать блоки locations
     :param html_block: html block from crossplane.parse
     :param default_port: default listen port
@@ -322,23 +369,27 @@ def process_servers(html_block: list, hostname_var, default_port=80, return_code
     :rtype: list[{
                 'server_names': tuple[str],
                 'locations': tuple[str],
-                'listen': tuple[str]
+                'listen': tuple[str],
                 }]
     """
     ret_val = []
+    http_ssl_on = check_ssl_on(html_block)
     for d in html_block:
         dd = d['directive'].lower()
         if dd == 'server':
             server_block = d['block']
             if skip_on_return(server_block, return_code):
                 continue
+            server_ssl_on = check_ssl_on(server_block)
             server_names = get_server_names(server_block, hostname_var)
             if server_names:
                 server = {
                     'server_names': server_names,
                     'locations': get_locations(server_block, hostname_var, return_code) if not skip_locations else [],
-                    'listens': get_all_listen_directives(server_block, default_port)
+                    'listens': get_all_listen_directives(server_block, default_port, server_ssl_on or http_ssl_on)
                 }
+                if debug:
+                    server['debug'] = server_block
                 ret_val.append(server)
     return ret_val
 
@@ -352,9 +403,10 @@ def check_exist_host_name_dns(host_name):
 
 
 def get_URLs_from_config(config_file_name: str, hostname_var: str, default_port: int = 80,
-                         return_code: int = 399, skip_locations=False, dns_check=False):
-
+                         return_code: int = 399, skip_locations=False, dns_check=False, debug=False):
     pl = crossplane.parse(config_file_name, comments=True, combine=True, ignore=('types', 'events',))
+    if pl['status'] == 'failed':
+        return 'Error: ' + ', '.join([err['error'] for err in pl['errors']])
     config = pl['config'][0]['parsed']
     # looking for a directive http
     http_block = None
@@ -363,15 +415,17 @@ def get_URLs_from_config(config_file_name: str, hostname_var: str, default_port:
             http_block = d['block']
             break
     if http_block is None:
-        # something wrong with config file
-        return None
-    res = process_servers(http_block, hostname_var, default_port, return_code, skip_locations)
+        # something wrong
+        return "Error: something wrong"
+#    if debug:
+#       delFileLine(http_block)
+    res = process_servers(http_block, hostname_var, default_port, return_code, skip_locations, debug=debug)
     # servers0_answer = [{
-    #         'locations': ['/hbz', '/equal', '/ifequal_not_check_regexpr', '/namedLocation/to/hbz_value'],
+    #         'locations': ['/hbz', '/equal', '/if_equal_not_check_regexpr', '/namedLocation/to/hbz_value'],
     #         'server_names': ('hbz.ru',),
     #         'listens': [(80, 'http')],
     #     }]
-    urls: list[str] = []
+    urls = []
     for server in res:
         for listen in server['listens']:
             for server_name in server['server_names']:
@@ -380,12 +434,20 @@ def get_URLs_from_config(config_file_name: str, hostname_var: str, default_port:
                 server_name_url = listen[1] + '://' + server_name
                 if listen not in ((80, 'http'), (443, 'https')):
                     server_name_url += ':' + str(listen[0])
-                urls.append(server_name_url)
+                if not debug:
+                    urls.append(server_name_url)
+                else:
+                    urls.append((server_name_url, server['debug']))
+
                 if not skip_locations:
                     for location in server['locations']:
                         if location == '/':
                             continue
                         if len(location) >= 1 and location[0] != '/':
                             location = '/' + location
-                        urls.append(server_name_url + location)
+                        if not debug:
+                            urls.append(server_name_url + location)
+                        else:
+                            urls.append((server_name_url + location, server['debug']))
+
     return urls

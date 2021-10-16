@@ -5,6 +5,8 @@ __pycache__
 htmlcov
 htmlcov/*
 venv*
+venv.36
+test.conf
 .idea/*
 .idea
 ./src/test.conf*

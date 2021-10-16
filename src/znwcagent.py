@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+import collections
+import sys
 
 from znwclib.nginx_config import get_URLs_from_config
 
@@ -7,6 +9,8 @@ __version__ = '0.1'
 import argparse
 import socket
 import json
+
+_DEBUG = False
 
 
 def parse_cmd_args(hostname=socket.gethostname(), port=80, return_code=399):
@@ -39,6 +43,7 @@ def parse_cmd_args(hostname=socket.gethostname(), port=80, return_code=399):
     return parser.parse_args()
 
 
+
 if __name__ == '__main__':
     args = parse_cmd_args()
     urls = get_URLs_from_config(
@@ -47,11 +52,20 @@ if __name__ == '__main__':
         default_port=args.port,
         return_code=args.ret_code,
         skip_locations=args.skip_location,
-        dns_check=args.check_dns
+        dns_check=args.check_dns,
+        debug=_DEBUG
     )
+    if isinstance(urls, str):
+        print(urls, file=sys.stderr)
+        sys.exit(-1)
+    counter = collections.Counter(urls)
     for_json = []
     for url in urls:
-        url_dict = {'{#URL}': url}
+        if not _DEBUG:
+            url_dict = {'{#URL}': url}
+        else:
+            url_dict = {'{#URL}': url[0], '{#DEBUG}': url[1]}
         for_json.append(url_dict)
+
     print(json.dumps(for_json, indent=(2 if args.human else None)))
     # print(args)
