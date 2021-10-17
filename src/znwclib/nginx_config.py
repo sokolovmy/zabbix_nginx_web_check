@@ -9,6 +9,7 @@ import validators
 _re_patt_port = re.compile(r"^\s*([^:]+):\s+(.+)$")
 _re_patt_assignment = re.compile(r"^\s*(.+)\s+=\s+(.+)$")
 _re_patt_split = re.compile(r"[\s,]+")
+_re_patt_listen_port = re.compile(r"(^|:)(?P<port>\d+)$")
 
 
 def process_special_comments(directives_list: list, hostname_var: str) -> dict:
@@ -78,7 +79,7 @@ def prep_server_name(name: str, special_comments: dict, single=False) -> Union[s
     :param single: если server_name содержит одно имя (используется для замены '' на $hostname)
     :return:
     """
-
+    # TODO пишем в readme что проверка производится
     res = special_comments['replace'].get(name, [])
     res = [n for n in res if validators.domain(n)]
     if res:
@@ -141,7 +142,7 @@ def get_server_names(server_block: list, hostname_var: str, special_comments: di
     if special_comments.get('skip_this'):
         return None
     elif special_comments.get('replace_all'):
-        # TODO сюда возможно нужно вставить проверку правильности имен
+        # TODO написать в readme, что проверка имен не производится
         return special_comments['replace_all']
 
     for directive in server_block:
@@ -171,8 +172,7 @@ def check_ssl_on(server_block: list):
     for d in server_block:
         dd = d['directive']
         if dd == 'ssl':
-            da = d['args']
-            if 'on' in da:
+            if 'on' in d['args']:
                 return True
     return False
 
@@ -186,18 +186,16 @@ def get_listen(listen_args, default_port=80, server_ssl_on=False):
     :param listen_args список аргументов директивы listen
     :return (<номер порта>, <(http|https)>)
     """
-    # TODO: написать test for ssl_on
-    patt_port = re.compile(r"(^|:)(?P<port>\d+)$")
     protocol = 'https' if server_ssl_on else 'http'
     port = default_port
     for arg in listen_args:
-        if arg.lower() == 'ssl':
+        if arg == 'ssl':
             protocol = 'https'
-        elif len(arg) >= 12 and arg[0:12] == 'so_keepalive':
+        elif arg.startswith('so_keepalive'):
             # пропускаем, т.к. может попасть под следующую регулярное выражение
             pass
         else:
-            res = patt_port.search(arg)
+            res = _re_patt_listen_port.search(arg)
             if res:
                 port = int(res.group('port'))
                 # bellow dirty hack. may be wrong may be true
@@ -219,7 +217,7 @@ def get_all_listen_directives(server_block, default_port=80, server_ssl_on=False
 
     listens = []
     for d in server_block:
-        if d['directive'].lower() == 'listen':
+        if d['directive'] == 'listen':
             listens.append(get_listen(d['args'], default_port, server_ssl_on))
 
     return listens

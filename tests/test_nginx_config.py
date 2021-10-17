@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from znwclib.nginx_config import process_special_comments, get_server_names, get_listen, prepare_location, \
     skip_on_return, \
-    get_locations, process_servers, get_URLs_from_config
+    get_locations, process_servers, get_URLs_from_config, get_all_listen_directives
 
 
 class TestNginxConfig(TestCase):
@@ -152,13 +152,42 @@ class TestNginxConfig(TestCase):
             (8080, 'http',): ['8080'],
             (443, 'https'): ['443', 'ssl'],
             (443, 'https'): ['1.2.3.4:443', 'ssl'],
-            (443, 'https'): ['hbz.ru:443', 'ssl']
+            (443, 'https'): ['hbz.ru:443', 'ssl'],
+            # test hack
+            (443, 'https'): ['hbz.ru:443'],
         }
         for answer in checks:
             self.assertEqual(
                 answer,
                 get_listen(checks[answer])
             )
+
+    def test_get_listen2(self):
+        checks = {
+            (70, 'https',): ['1.1.1.1:70'],
+            (80, 'https',): ['1.2.3.4'],
+            (90, 'https',): ['[::]:90'],
+            (80, 'https',): ['[::1]'],
+            (80, 'https',): ['*'],
+            (90, 'https'): ['90', 'so_keepalive=on 1:2:3'],
+            (80, 'https',): ['hbz.ru'],
+            (8090, 'https',): ['hbz.ru:8090'],
+            (8080, 'https',): ['8080'],
+            (443, 'https'): ['443', 'ssl'],
+            (443, 'https'): ['1.2.3.4:443', 'ssl'],
+            (443, 'https'): ['hbz.ru:443', 'ssl']
+        }
+        for answer in checks:
+            self.assertEqual(
+                answer,
+                get_listen(checks[answer], server_ssl_on=True)
+            )
+
+    def test_get_all_listen_directives(self):
+        self.assertEqual(
+            [(80, 'http')],
+            get_all_listen_directives(servers[0]['block'])
+        )
 
     def test_prepare_location_replace_all(self):
         self.assertEqual(
@@ -436,15 +465,15 @@ servers_answer = [
          'www.haulmont-technology.ru', 'haulmont-technology.com', 'www.haulmont-technology.com',
          'haulmont.co.uk', 'www.haulmont.co.uk', 'haulmont-technology.co.uk', 'www.haulmont-technology.co.uk'
      ]},
-    {'listens': [(443, 'https')], 'locations': [], 'server_names': ['haulmont.com',]},
+    {'listens': [(443, 'https')], 'locations': [], 'server_names': ['haulmont.com', ]},
     {'listens': [(443, 'https')], 'locations': [], 'server_names': ['haulmont.dev', 'www.haulmont.dev']},
-    {'listens': [(443, 'https')], 'locations': ['/', '/forms'], 'server_names': ['www.haulmont.com',]},
+    {'listens': [(443, 'https')], 'locations': ['/', '/forms'], 'server_names': ['www.haulmont.com', ]},
     {'listens': [(80, 'http')], 'locations': [], 'server_names': ['www.haulmont.ru', 'haulmont.ru']},
-    {'listens': [(443, 'https')], 'locations': [], 'server_names': ['haulmont.ru',]},
+    {'listens': [(443, 'https')], 'locations': [], 'server_names': ['haulmont.ru', ]},
     {
         'listens': [(443, 'https')],
         'locations': ['/sites/default/files/webform/cv-ru', '/'],
-        'server_names': ['www.haulmont.ru',]
+        'server_names': ['www.haulmont.ru', ]
     }
 ]
 
@@ -533,3 +562,5 @@ servers = [
             'block': [{'directive': 'proxy_pass', 'line': 71, 'args': ['http://192.168.33.68/']}]}
     ]}
 ]
+
+
