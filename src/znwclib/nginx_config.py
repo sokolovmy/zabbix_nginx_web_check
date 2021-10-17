@@ -79,7 +79,6 @@ def prep_server_name(name: str, special_comments: dict, single=False) -> Union[s
     :param single: если server_name содержит одно имя (используется для замены '' на $hostname)
     :return:
     """
-    # TODO пишем в readme что проверка производится
     res = special_comments['replace'].get(name, [])
     res = [n for n in res if validators.domain(n)]
     if res:
