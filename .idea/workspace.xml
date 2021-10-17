@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a44da9ea-e25e-4b98-bcf5-ce4cbb3856a3" name="Changes" comment="some review">
+    <list default="true" id="a44da9ea-e25e-4b98-bcf5-ce4cbb3856a3" name="Changes" comment="review code nginx_config.py 2">
+      <change afterPath="$PROJECT_DIR$/tests/coverage.cmd" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/1" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/1.cmd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/1.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/coverage.cmd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements-server.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements-server.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/znwclib/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/znwclib/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/znwclib/nginx_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/znwclib/nginx_config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/testing.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/test_nginx_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_nginx_config.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -43,11 +52,12 @@
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$USER_HOME$/Downloads/postgresql-extended-template(pgCayenne).xml" />
-    <property name="settings.editor.selected.configurable" value="Console" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/tests" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Github\nginx_web_check\tests" />
       <recent name="C:\Github\nginx_web_check\src" />
       <recent name="C:\Github\nginx_web_check\src\zbx_nginx_web_check" />
     </key>
@@ -116,27 +126,6 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="testing" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="nginx_web_check" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/testing.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <configuration name="Unittests for test_nginx_config.TestNginxConfig.test_get_all_listen_directives" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
       <module name="nginx_web_check" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -148,20 +137,6 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
       <option name="_new_target" value="&quot;test_nginx_config.TestNginxConfig.test_get_all_listen_directives&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Unittests for test_nginx_config.TestNginxConfig.test_get_listen" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
-      <module name="nginx_web_check" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_nginx_config.TestNginxConfig.test_get_listen&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -179,7 +154,7 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Unittests for test_nginx_config.TestNginxConfig.test_get_server_names" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+    <configuration name="Unittests for test_nginx_config.TestNginxConfig.test_get_urls_file_config3" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
       <module name="nginx_web_check" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -189,7 +164,35 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_nginx_config.TestNginxConfig.test_get_server_names&quot;" />
+      <option name="_new_target" value="&quot;test_nginx_config.TestNginxConfig.test_get_urls_file_config3&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Unittests for test_nginx_config.TestNginxConfig.test_get_urls_file_config4" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+      <module name="nginx_web_check" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_nginx_config.TestNginxConfig.test_get_urls_file_config4&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Unittests for test_nginx_config.TestNginxConfig.test_get_urls_from_config" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+      <module name="nginx_web_check" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_nginx_config.TestNginxConfig.test_get_urls_from_config&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -197,19 +200,19 @@
       <item itemvalue="Python.main" />
       <item itemvalue="Python.nginx_config" />
       <item itemvalue="Python tests.Unittests in tests" />
-      <item itemvalue="Python tests.Unittests for test_nginx_config.TestNginxConfig.test_get_server_names" />
-      <item itemvalue="Python.testing" />
       <item itemvalue="Python tests.Unittests for test_nginx_config.TestNginxConfig.test_get_listen2" />
-      <item itemvalue="Python tests.Unittests for test_nginx_config.TestNginxConfig.test_get_listen" />
       <item itemvalue="Python tests.Unittests for test_nginx_config.TestNginxConfig.test_get_all_listen_directives" />
+      <item itemvalue="Python tests.Unittests for test_nginx_config.TestNginxConfig.test_get_urls_from_config" />
+      <item itemvalue="Python tests.Unittests for test_nginx_config.TestNginxConfig.test_get_urls_file_config3" />
+      <item itemvalue="Python tests.Unittests for test_nginx_config.TestNginxConfig.test_get_urls_file_config4" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Unittests for test_nginx_config.TestNginxConfig.test_get_urls_file_config4" />
+        <item itemvalue="Python tests.Unittests for test_nginx_config.TestNginxConfig.test_get_urls_file_config3" />
+        <item itemvalue="Python tests.Unittests for test_nginx_config.TestNginxConfig.test_get_urls_from_config" />
         <item itemvalue="Python tests.Unittests for test_nginx_config.TestNginxConfig.test_get_all_listen_directives" />
         <item itemvalue="Python tests.Unittests for test_nginx_config.TestNginxConfig.test_get_listen2" />
-        <item itemvalue="Python tests.Unittests for test_nginx_config.TestNginxConfig.test_get_listen" />
-        <item itemvalue="Python tests.Unittests for test_nginx_config.TestNginxConfig.test_get_server_names" />
-        <item itemvalue="Python.testing" />
       </list>
     </recent_temporary>
   </component>
@@ -414,7 +417,28 @@
       <option name="project" value="LOCAL" />
       <updated>1634424322165</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="some review 2">
+      <created>1634451012867</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1634451012867</updated>
+    </task>
+    <task id="LOCAL-00029" summary="some review 2">
+      <created>1634451030727</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1634451030727</updated>
+    </task>
+    <task id="LOCAL-00030" summary="replace company name">
+      <created>1634451290639</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1634451290639</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -454,7 +478,9 @@
     <MESSAGE value="start" />
     <MESSAGE value="some changes" />
     <MESSAGE value="some review" />
-    <option name="LAST_COMMIT_MESSAGE" value="some review" />
+    <MESSAGE value="some review 2" />
+    <MESSAGE value="replace company name" />
+    <option name="LAST_COMMIT_MESSAGE" value="replace company name" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -502,8 +528,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/tests/test_nginx_config.py</url>
-          <line>113</line>
+          <line>115</line>
           <option name="timeStamp" value="53" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/tests/test_nginx_config.py</url>
+          <line>382</line>
+          <option name="timeStamp" value="55" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

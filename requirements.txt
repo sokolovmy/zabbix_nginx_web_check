@@ -1,5 +1,4 @@
-crossplane~=0.5.7
-validators~=0.18.2
-argparse~=1.4.0
-
-dnspython~=2.1.0
+crossplane>=0.5.7
+validators>=0.18.2
+argparse>=1.4.0
+dnspython>=2.1.0

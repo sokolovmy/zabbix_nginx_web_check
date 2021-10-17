@@ -16,8 +16,8 @@ def process_special_comments(directives_list: list, hostname_var: str) -> dict:
     """
     Обрабатывает комментарии и ищет специальные, по ним составляет словарь
     Примеры специальных комментариев:
-        # replace: <changed_name> = <list of changed names through a space>
-        # replace_all: <list of changed names through a space>
+        # replace: <changed_name> = changed_name[, another_changed_name[, ...]]
+        # replace_all: <replaced str>
         # var: $<name_of_var = <value_of_var>
         # skip_this: True
     :param hostname_var: $hostname - variable
@@ -110,9 +110,9 @@ def get_server_names(server_block: list, hostname_var: str, special_comments: di
           - имена *, _, --, !@# и другие некорректные имена удаляются из списка
         Можно изменить поведение обработчика, если указать специальные комментарии непосредственно
         под директивой server_name.
-            # replace: <changed_name> = <list of changed names through a space>
+            # replace: <changed_name> = changed_name[, another_changed_name[, ...]]
         изменяет одно имя на список
-            # replace_all: <list of changed names through a space>
+            # replace_all: changed_name[, another_changed_name[, ...]]
         заменяет все имена в директиве на список имен из комментария
             # var: $<name_of_var = <value_of_var>
         заменяет все вхождения переменной на то, что будет указано в комментарии
@@ -134,7 +134,6 @@ def get_server_names(server_block: list, hostname_var: str, special_comments: di
     :param hostname_var: $hostname
     :returns возвращает кортеж имен из директивы server_name
     """
-    # TODO продолжить ревьювить
     server_names = []
     if special_comments is None:
         special_comments = process_special_comments(server_block, hostname_var)
@@ -142,7 +141,6 @@ def get_server_names(server_block: list, hostname_var: str, special_comments: di
     if special_comments.get('skip_this'):
         return None
     elif special_comments.get('replace_all'):
-        # TODO написать в readme, что проверка имен не производится
         return special_comments['replace_all']
 
     for directive in server_block:
@@ -242,30 +240,23 @@ def prepare_location(location_args: list, special_comments: dict) -> Optional[st
         elif special_comments.get('replace_all'):
             return special_comments['replace_all'][0]
 
-    for arg in location_args:
-        length = len(arg)
-        if length == 0:
-            continue
-        if arg[0] == '=':
-            if length == 1:
-                continue
-            else:
-                return prep_name_var(arg[1:], special_comments)
-        elif arg[0] == '~':
-            # checks ~ and ~*
-            return None
-        elif length >= 2 and arg[0:2] == '^~':
-            if length == 2:
-                continue
-            else:
-                return prep_name_var(arg[2:], special_comments)
-        else:
-            res = prep_name_var(arg, special_comments)
-            if len(res) > 0 and res[0] == '@':
-                return None
-            else:
-                return res
-    return None
+    location = ''.join(location_args)
+
+    if not location:
+        return None
+
+    if location.startswith('~'):
+        # checks ~ and ~*
+        return None
+
+    if location.startswith('='):
+        location = location[1:]
+    elif location.startswith('^~'):
+        location = location[2:]
+    location = prep_name_var(location, special_comments)
+    if location.startswith('@'):
+        return None
+    return location
 
 
 def skip_on_return(block: list, return_code) -> bool:
@@ -286,18 +277,17 @@ def skip_on_return(block: list, return_code) -> bool:
 
 def get_locations(server_block: list, hostname_var, return_code=399) -> list:
     """
-    Выдает список location's из блока server. Вложенные location's также.
+    Выдает список location's из блока server. Вложенные location's также добавляются в список.
     Не включаются в список, если return http code больше return_code
+    Не поддерживаются location's выполненные в виде регулярных выражений (~, ~*) и именованные (@Named),
+    их можно заменить при помощи специальных комментариев
 
-    Поддерживаются специальные комментарии:
+    Специальные комментарии должные быть расположены внутри блока location:
         # replace_all: <changed location>
         # skip_this: True
         # var: $var_name = var_value
         # var: @another_var_name = var_value
-    Не поддерживаются:
-        - locations with regular expressions
-        - named locations (example: @Named)
-    Их можно заменить при помощи специального объявления в комментариях
+
     :rtype: object
     :param server_block: блок server crossplane.parse
     :param hostname_var: переменная $hostname
@@ -340,17 +330,20 @@ def process_servers(html_block: list, hostname_var, default_port=80, return_code
                     debug=False):
     """
     Обрабатывает html block crossplane.parse. возвращает список словарей в котором лежат server_name's & location's
-    Не включаются в список, если return http code больше return_code
+
+    Не включаются в список, если в директиве return http_code больше return_code
+
     Поддерживаются специальные комментарии:
-        # replace: server_name = changed_server_name
-        имя из списка будет заменено на другое
-        # replace_all:
-        вся строка с именами будет заменена на новую
+        # replace: server_name = changed_server_name[, another_server_name[, ...]]
+        имя из списка будет заменено на другое. Имена проверяются на корректность.
+        # replace_all: changed_name[, another_changed_name[, ...]]
+        вся строка с именами будет заменена на новую. Проверка на корректность не производится
         # skip_this: True
         пропустить этот сервер
         # var: $var_name = var_value
         # var: @another_var_name = var_value
-        переменные встречающиеся в именах будут заменены в соответствии с вышеописанным списком
+    Переменные встречающиеся в именах будут заменены в соответствии с вышеописанным списком
+
     Имена из директивы server_name, такие как:
           - *.example.org - по умолчанию будут заменены на www.example.org,
           - .example.org - будет заменено на example.org,
@@ -358,6 +351,7 @@ def process_servers(html_block: list, hostname_var, default_port=80, return_code
           - ~^www\..+\.example\.org$ - все регулярные выражения также будут удаляться.
           - "" - удаляется, если значение не является единственным в списке, в противном случае заменяется на $hostname
           - имена *, _, --, !@# и другие некорректные имена удаляются из списка
+    Любое имя, в том числе некорректное, может быть заменено с помощью специальных комментариев на другое.
 
     :param debug: for debug purposes
     :param skip_locations: не обрабатывать блоки locations
@@ -372,20 +366,19 @@ def process_servers(html_block: list, hostname_var, default_port=80, return_code
                 }]
     """
     ret_val = []
-    http_ssl_on = check_ssl_on(html_block)
+    ssl_on = check_ssl_on(html_block)
     for d in html_block:
-        dd = d['directive'].lower()
-        if dd == 'server':
+        if d['directive'] == 'server':
             server_block = d['block']
             if skip_on_return(server_block, return_code):
                 continue
-            server_ssl_on = check_ssl_on(server_block)
+            ssl_on = ssl_on or check_ssl_on(server_block)
             server_names = get_server_names(server_block, hostname_var)
             if server_names:
                 server = {
                     'server_names': server_names,
                     'locations': get_locations(server_block, hostname_var, return_code) if not skip_locations else [],
-                    'listens': get_all_listen_directives(server_block, default_port, server_ssl_on or http_ssl_on)
+                    'listens': get_all_listen_directives(server_block, default_port, ssl_on)
                 }
                 if debug:
                     server['debug'] = server_block
@@ -410,12 +403,13 @@ def get_URLs_from_config(config_file_name: str, hostname_var: str, default_port:
     # looking for a directive http
     http_block = None
     for d in config:
-        if d['directive'].lower() == 'http':
+        if d['directive'] == 'http':
             http_block = d['block']
             break
-    if http_block is None:
+    else:
         # something wrong
         return "Error: something wrong"
+
     #    if debug:
     #       delFileLine(http_block)
     res = process_servers(http_block, hostname_var, default_port, return_code, skip_locations, debug=debug)
@@ -430,9 +424,9 @@ def get_URLs_from_config(config_file_name: str, hostname_var: str, default_port:
             for server_name in server['server_names']:
                 if dns_check and not check_exist_host_name_dns(server_name):
                     continue
-                server_name_url = listen[1] + '://' + server_name
+                server_name_url = f"{listen[1]}://{server_name}"
                 if listen not in ((80, 'http'), (443, 'https')):
-                    server_name_url += ':' + str(listen[0])
+                    server_name_url = f"{server_name_url}:{listen[0]}"
                 if not debug:
                     urls.append(server_name_url)
                 else:
@@ -441,9 +435,10 @@ def get_URLs_from_config(config_file_name: str, hostname_var: str, default_port:
                 if not skip_locations:
                     for location in server['locations']:
                         if location == '/':
+                            # already added server_name url
                             continue
-                        if len(location) >= 1 and location[0] != '/':
-                            location = '/' + location
+                        if location and not location.startswith('/'):
+                            location = f"/{location}"
                         if not debug:
                             urls.append(server_name_url + location)
                         else:

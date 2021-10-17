@@ -1,3 +1,4 @@
+import os.path
 from collections import ChainMap
 from unittest import TestCase
 
@@ -5,6 +6,7 @@ from znwclib.nginx_config import process_special_comments, get_server_names, get
     skip_on_return, \
     get_locations, process_servers, get_URLs_from_config, get_all_listen_directives
 
+cur_test_directory = os.path.dirname(__file__)
 
 class TestNginxConfig(TestCase):
     def setUp(self) -> None:
@@ -349,7 +351,7 @@ class TestNginxConfig(TestCase):
     def test_get_urls_from_config(self):
         self.assertEqual(
             config_res,
-            get_URLs_from_config('./nginx.conf', 'h.domain.com', dns_check=False)
+            get_URLs_from_config(f"{cur_test_directory}/nginx.conf", 'h.domain.com', dns_check=False)
         )
 
     def test_get_urls_file_not_found(self):
@@ -361,7 +363,7 @@ class TestNginxConfig(TestCase):
     def test_get_urls_file_config2(self):
         self.assertEqual(
             config_res2,
-            get_URLs_from_config('./nginx2.conf', 'h.domain.com', dns_check=False)
+            get_URLs_from_config(f"{cur_test_directory}/nginx2.conf", 'h.domain.com', dns_check=False)
         )
 
     def test_get_urls_file_config3(self):
@@ -374,13 +376,13 @@ class TestNginxConfig(TestCase):
              'https://www.company.com/forms',
              'https://www.company.ru',
              'https://www.company.ru/sites/default/files/webform/cv-ru'],
-            sorted(get_URLs_from_config('nginx2.conf', 'h.domain.com', 80, 300, dns_check=False))
+            sorted(get_URLs_from_config(f"{cur_test_directory}/nginx2.conf", 'h.domain.com', 80, 300, dns_check=False))
         )
 
     def test_get_urls_file_config4(self):
         self.assertEqual(
             ['http://hbz.ru', 'https://www.company.com', 'https://www.company.ru'],
-            sorted(get_URLs_from_config('nginx2.conf', 'h.domain.com', 80, 300, True, dns_check=False))
+            sorted(get_URLs_from_config(f"{cur_test_directory}/nginx2.conf", 'h.domain.com', 80, 300, True, dns_check=False))
         )
 
 
