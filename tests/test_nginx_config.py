@@ -370,16 +370,16 @@ class TestNginxConfig(TestCase):
              'http://hbz.ru/equal',
              'http://hbz.ru/hbz',
              'http://hbz.ru/ifequal_not_check_regexpr',
-             'https://www.haulmont.com',
-             'https://www.haulmont.com/forms',
-             'https://www.haulmont.ru',
-             'https://www.haulmont.ru/sites/default/files/webform/cv-ru'],
+             'https://www.company.com',
+             'https://www.company.com/forms',
+             'https://www.company.ru',
+             'https://www.company.ru/sites/default/files/webform/cv-ru'],
             sorted(get_URLs_from_config('nginx2.conf', 'h.domain.com', 80, 300, dns_check=False))
         )
 
     def test_get_urls_file_config4(self):
         self.assertEqual(
-            ['http://hbz.ru', 'https://www.haulmont.com', 'https://www.haulmont.ru'],
+            ['http://hbz.ru', 'https://www.company.com', 'https://www.company.ru'],
             sorted(get_URLs_from_config('nginx2.conf', 'h.domain.com', 80, 300, True, dns_check=False))
         )
 
@@ -395,34 +395,34 @@ config_res2 = ['http://hbz.ru',
                'http://hbz.ru/hbz',
                'http://hbz.ru/equal',
                'http://hbz.ru/ifequal_not_check_regexpr',
-               'http://www.haulmont.com',
-               'http://haulmont.dev',
-               'http://www.haulmont.dev',
-               'http://haulmont.tech',
-               'http://haulmont.com',
-               'http://www.haulmont.tech',
-               'http://haulmont.org',
-               'http://www.haulmont.org',
-               'http://haulmont.net',
-               'http://www.haulmont.net',
-               'http://haulmont-technology.ru',
-               'http://www.haulmont-technology.ru',
-               'http://haulmont-technology.com',
-               'http://www.haulmont-technology.com',
-               'http://haulmont.co.uk',
-               'http://www.haulmont.co.uk',
-               'http://haulmont-technology.co.uk',
-               'http://www.haulmont-technology.co.uk',
-               'https://haulmont.com',
-               'https://haulmont.dev',
-               'https://www.haulmont.dev',
-               'https://www.haulmont.com',
-               'https://www.haulmont.com/forms',
-               'http://www.haulmont.ru',
-               'http://haulmont.ru',
-               'https://haulmont.ru',
-               'https://www.haulmont.ru',
-               'https://www.haulmont.ru/sites/default/files/webform/cv-ru']
+               'http://www.company.com',
+               'http://company.dev',
+               'http://www.company.dev',
+               'http://company.tech',
+               'http://company.com',
+               'http://www.company.tech',
+               'http://company.org',
+               'http://www.company.org',
+               'http://company.net',
+               'http://www.company.net',
+               'http://company-technology.ru',
+               'http://www.company-technology.ru',
+               'http://company-technology.com',
+               'http://www.company-technology.com',
+               'http://company.co.uk',
+               'http://www.company.co.uk',
+               'http://company-technology.co.uk',
+               'http://www.company-technology.co.uk',
+               'https://company.com',
+               'https://company.dev',
+               'https://www.company.dev',
+               'https://www.company.com',
+               'https://www.company.com/forms',
+               'http://www.company.ru',
+               'http://company.ru',
+               'https://company.ru',
+               'https://www.company.ru',
+               'https://www.company.ru/sites/default/files/webform/cv-ru']
 
 servers0_answer = [
     {
@@ -460,20 +460,20 @@ servers_answer = [
     {'listens': [(80, 'http')], 'locations': [], 'server_names': ['hbz.ru']},
     {'listens': [(80, 'http')], 'locations': [],
      'server_names': [
-         'www.haulmont.com', 'haulmont.dev', 'www.haulmont.dev', 'haulmont.tech', 'haulmont.com', 'www.haulmont.tech',
-         'haulmont.org', 'www.haulmont.org', 'haulmont.net', 'www.haulmont.net', 'haulmont-technology.ru',
-         'www.haulmont-technology.ru', 'haulmont-technology.com', 'www.haulmont-technology.com',
-         'haulmont.co.uk', 'www.haulmont.co.uk', 'haulmont-technology.co.uk', 'www.haulmont-technology.co.uk'
+         'www.company.com', 'company.dev', 'www.company.dev', 'company.tech', 'company.com', 'www.company.tech',
+         'company.org', 'www.company.org', 'company.net', 'www.company.net', 'company-technology.ru',
+         'www.company-technology.ru', 'company-technology.com', 'www.company-technology.com',
+         'company.co.uk', 'www.company.co.uk', 'company-technology.co.uk', 'www.company-technology.co.uk'
      ]},
-    {'listens': [(443, 'https')], 'locations': [], 'server_names': ['haulmont.com', ]},
-    {'listens': [(443, 'https')], 'locations': [], 'server_names': ['haulmont.dev', 'www.haulmont.dev']},
-    {'listens': [(443, 'https')], 'locations': ['/', '/forms'], 'server_names': ['www.haulmont.com', ]},
-    {'listens': [(80, 'http')], 'locations': [], 'server_names': ['www.haulmont.ru', 'haulmont.ru']},
-    {'listens': [(443, 'https')], 'locations': [], 'server_names': ['haulmont.ru', ]},
+    {'listens': [(443, 'https')], 'locations': [], 'server_names': ['company.com', ]},
+    {'listens': [(443, 'https')], 'locations': [], 'server_names': ['company.dev', 'www.company.dev']},
+    {'listens': [(443, 'https')], 'locations': ['/', '/forms'], 'server_names': ['www.company.com', ]},
+    {'listens': [(80, 'http')], 'locations': [], 'server_names': ['www.company.ru', 'company.ru']},
+    {'listens': [(443, 'https')], 'locations': [], 'server_names': ['company.ru', ]},
     {
         'listens': [(443, 'https')],
         'locations': ['/sites/default/files/webform/cv-ru', '/'],
-        'server_names': ['www.haulmont.ru', ]
+        'server_names': ['www.company.ru', ]
     }
 ]
 
@@ -489,34 +489,34 @@ servers = [
         {'directive': 'listen', 'line': 15, 'args': ['80']},
         {'directive': 'server_name', 'line': 16,
          'args': [
-             'www.haulmont.com', 'haulmont.dev',
-             'www.haulmont.dev', 'haulmont.tech',
-             'haulmont.com', 'www.haulmont.tech',
-             'haulmont.org', 'www.haulmont.org',
-             'haulmont.net', 'www.haulmont.net',
-             'haulmont-technology.ru',
-             'www.haulmont-technology.ru',
-             'haulmont-technology.com',
-             'www.haulmont-technology.com',
-             'haulmont.co.uk', 'www.haulmont.co.uk',
-             'haulmont-technology.co.uk',
-             'www.haulmont-technology.co.uk'
+             'www.company.com', 'company.dev',
+             'www.company.dev', 'company.tech',
+             'company.com', 'www.company.tech',
+             'company.org', 'www.company.org',
+             'company.net', 'www.company.net',
+             'company-technology.ru',
+             'www.company-technology.ru',
+             'company-technology.com',
+             'www.company-technology.com',
+             'company.co.uk', 'www.company.co.uk',
+             'company-technology.co.uk',
+             'www.company-technology.co.uk'
          ]
          },
-        {'directive': 'return', 'line': 17, 'args': ['301', 'https://www.haulmont.com$request_uri']}
+        {'directive': 'return', 'line': 17, 'args': ['301', 'https://www.company.com$request_uri']}
     ]},
     {'directive': 'server', 'block': [
         {'directive': 'listen', 'line': 21, 'args': ['443', 'ssl', 'http2']},
-        {'directive': 'server_name', 'line': 22, 'args': ['haulmont.com']},
-        {'directive': 'return', 'line': 23, 'args': ['301', 'https://www.haulmont.com$request_uri']}
+        {'directive': 'server_name', 'line': 22, 'args': ['company.com']},
+        {'directive': 'return', 'line': 23, 'args': ['301', 'https://www.company.com$request_uri']}
     ]},
     {'directive': 'server', 'block': [
         {'directive': 'listen', 'line': 27, 'args': ['443', 'ssl', 'http2']},
-        {'directive': 'server_name', 'line': 28, 'args': ['haulmont.dev', 'www.haulmont.dev']},
-        {'directive': 'return', 'line': 29, 'args': ['301', 'https://www.haulmont.com$request_uri']}
+        {'directive': 'server_name', 'line': 28, 'args': ['company.dev', 'www.company.dev']},
+        {'directive': 'return', 'line': 29, 'args': ['301', 'https://www.company.com$request_uri']}
     ]},
     {'directive': 'server', 'block': [
-        {'directive': 'server_name', 'line': 33, 'args': ['www.haulmont.com']},
+        {'directive': 'server_name', 'line': 33, 'args': ['www.company.com']},
         {'directive': 'listen', 'line': 34, 'args': ['443', 'ssl', 'http2']},
         {
             'directive': 'location', 'line': 35, 'args': ['/'],
@@ -531,16 +531,16 @@ servers = [
     ]},
     {'directive': 'server', 'block': [
         {'directive': 'listen', 'line': 46, 'args': ['80']},
-        {'directive': 'server_name', 'line': 47, 'args': ['www.haulmont.ru', 'haulmont.ru']},
-        {'directive': 'return', 'line': 48, 'args': ['301', 'https://www.haulmont.ru$request_uri']}
+        {'directive': 'server_name', 'line': 47, 'args': ['www.company.ru', 'company.ru']},
+        {'directive': 'return', 'line': 48, 'args': ['301', 'https://www.company.ru$request_uri']}
     ]},
     {'directive': 'server', 'block': [
         {'directive': 'listen', 'line': 52, 'args': ['443', 'ssl', 'http2']},
-        {'directive': 'server_name', 'line': 53, 'args': ['haulmont.ru']},
-        {'directive': 'return', 'line': 54, 'args': ['301', 'https://www.haulmont.ru$request_uri']}
+        {'directive': 'server_name', 'line': 53, 'args': ['company.ru']},
+        {'directive': 'return', 'line': 54, 'args': ['301', 'https://www.company.ru$request_uri']}
     ]},
     {'directive': 'server', 'block': [
-        {'directive': 'server_name', 'line': 57, 'args': ['www.haulmont.ru']},
+        {'directive': 'server_name', 'line': 57, 'args': ['www.company.ru']},
         {'directive': 'listen', 'line': 59, 'args': ['443', 'ssl', 'http2']},
         {
             'directive': 'location', 'line': 60, 'args': ['~*cv-ru\\/.*xml$'],

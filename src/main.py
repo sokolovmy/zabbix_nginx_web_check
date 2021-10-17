@@ -19,12 +19,12 @@ if __name__ == '__main__':
         #     print(res.groups())
         #     print(res.group('port'))
     # print(tuple(pat.split('asdsad')))
-    # for domain in ['www.haulmont.com', 'haulmont.dev', 'www.haulmont.dev', 'haulmont.tech', 'haulmont.com',
-    #                'www.haulmont.tech',
-    #                'haulmont.org', 'www.haulmont.org', 'haulmont.net', 'www.haulmont.net', 'haulmont-technology.ru',
-    #                'www.haulmont-technology.ru', 'haulmont-technology.com', 'www.haulmont-technology.com',
-    #                'haulmont.co.uk',
-    #                'www.haulmont.co.uk', 'haulmont-technology.co.uk', 'www.haulmont-technology.co.uk']:
+    # for domain in ['www.company.com', 'company.dev', 'www.company.dev', 'company.tech', 'company.com',
+    #                'www.company.tech',
+    #                'company.org', 'www.company.org', 'company.net', 'www.company.net', 'company-technology.ru',
+    #                'www.company-technology.ru', 'company-technology.com', 'www.company-technology.com',
+    #                'company.co.uk',
+    #                'www.company.co.uk', 'company-technology.co.uk', 'www.company-technology.co.uk']:
     #     result = validators.domain(domain)
     #     if result:
     #         print('validated')
