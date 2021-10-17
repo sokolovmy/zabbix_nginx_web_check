@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2021-10-17T19:12:13Z</date>
+    <groups>
+        <group>
+            <name>Templates</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template LLD Autodiscovery URLs From Nginx Config</template>
+            <name>Template LLD Autodiscovery URLs From Nginx Config</name>
+            <groups>
+                <group>
+                    <name>Templates</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>LLD Nginx Config</name>
+                </application>
+            </applications>
+            <discovery_rules>
+                <discovery_rule>
+                    <name>URLs From Nginx Config</name>
+                    <key>znwcagent[{$ZNWC_AGENT_ARGS}]</key>
+                    <delay>5m</delay>
+                    <filter>
+                        <conditions>
+                            <condition>
+                                <macro>{#URL}</macro>
+                                <value>{$URL.MATCHES}</value>
+                                <formulaid>A</formulaid>
+                            </condition>
+                            <condition>
+                                <macro>{#URL}</macro>
+                                <value>{$URL.NOT_MATCHES}</value>
+                                <operator>NOT_MATCHES_REGEX</operator>
+                                <formulaid>B</formulaid>
+                            </condition>
+                        </conditions>
+                    </filter>
+                    <lifetime>2w</lifetime>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>ErrorNo. URL: {#URL}</name>
+                            <type>DEPENDENT</type>
+                            <key>znwcserver.errno[{#URL}]</key>
+                            <delay>0</delay>
+                            <history>1w</history>
+                            <trends>90d</trends>
+                            <applications>
+                                <application>
+                                    <name>LLD Nginx Config</name>
+                                </application>
+                            </applications>
+                            <application_prototypes>
+                                <application_prototype>
+                                    <name>LLD {#URL}</name>
+                                </application_prototype>
+                            </application_prototypes>
+                            <valuemap>
+                                <name>LLD autodiscovery URLs From Nginx Config Connection Errors</name>
+                            </valuemap>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.err</params>
+                                    <error_handler>DISCARD_VALUE</error_handler>
+                                </step>
+                                <step>
+                                    <type>DISCARD_UNCHANGED</type>
+                                    <params/>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>znwcserver.py[{#URL}]</key>
+                            </master_item>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{last()}&lt;&gt;0</expression>
+                                    <name>Web Сheck Failed With Error {ITEM.LASTVALUE1}. URL: {#URL}</name>
+                                    <opdata>Current Value: {ITEM.LASTVALUE}</opdata>
+                                    <priority>AVERAGE</priority>
+                                    <description>{#URL}</description>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Final URL. URL: {#URL}</name>
+                            <type>DEPENDENT</type>
+                            <key>znwcserver.finalurl[{#URL}]</key>
+                            <delay>0</delay>
+                            <history>2d</history>
+                            <trends>0</trends>
+                            <value_type>CHAR</value_type>
+                            <applications>
+                                <application>
+                                    <name>LLD Nginx Config</name>
+                                </application>
+                            </applications>
+                            <application_prototypes>
+                                <application_prototype>
+                                    <name>LLD {#URL}</name>
+                                </application_prototype>
+                            </application_prototypes>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.url</params>
+                                    <error_handler>DISCARD_VALUE</error_handler>
+                                </step>
+                                <step>
+                                    <type>DISCARD_UNCHANGED</type>
+                                    <params/>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>znwcserver.py[{#URL}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>HTTP Status Code. URL: {#URL}</name>
+                            <type>DEPENDENT</type>
+                            <key>znwcserver.http_code[{#URL}]</key>
+                            <delay>0</delay>
+                            <history>1w</history>
+                            <trends>90d</trends>
+                            <applications>
+                                <application>
+                                    <name>LLD Nginx Config</name>
+                                </application>
+                            </applications>
+                            <application_prototypes>
+                                <application_prototype>
+                                    <name>LLD {#URL}</name>
+                                </application_prototype>
+                            </application_prototypes>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.status_code</params>
+                                    <error_handler>DISCARD_VALUE</error_handler>
+                                </step>
+                                <step>
+                                    <type>DISCARD_UNCHANGED</type>
+                                    <params/>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>znwcserver.py[{#URL}]</key>
+                            </master_item>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{last()}&lt;&gt;200</expression>
+                                    <name>Server Return Code {ITEM.LASTVALUE1} != $1. URL: {#URL}</name>
+                                    <opdata>Current Value: {ITEM.LASTVALUE}</opdata>
+                                    <priority>AVERAGE</priority>
+                                    <description>{#URL}</description>
+                                    <dependencies>
+                                        <dependency>
+                                            <name>Web Сheck Failed With Error {ITEM.LASTVALUE1}. URL: {#URL}</name>
+                                            <expression>{Template LLD Autodiscovery URLs From Nginx Config:znwcserver.errno[{#URL}].last()}&lt;&gt;0</expression>
+                                        </dependency>
+                                    </dependencies>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#URL}</name>
+                            <type>EXTERNAL</type>
+                            <key>znwcserver.py[{#URL}]</key>
+                            <delay>5m</delay>
+                            <history>0</history>
+                            <trends>0</trends>
+                            <value_type>CHAR</value_type>
+                            <applications>
+                                <application>
+                                    <name>LLD Nginx Config</name>
+                                </application>
+                            </applications>
+                            <application_prototypes>
+                                <application_prototype>
+                                    <name>LLD {#URL}</name>
+                                </application_prototype>
+                            </application_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Elapsed Time. URL: {#URL}</name>
+                            <type>DEPENDENT</type>
+                            <key>znwcserver.time[{#URL}]</key>
+                            <delay>0</delay>
+                            <history>1w</history>
+                            <trends>90d</trends>
+                            <value_type>FLOAT</value_type>
+                            <units>ms</units>
+                            <applications>
+                                <application>
+                                    <name>LLD Nginx Config</name>
+                                </application>
+                            </applications>
+                            <application_prototypes>
+                                <application_prototype>
+                                    <name>LLD {#URL}</name>
+                                </application_prototype>
+                            </application_prototypes>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.elapsed</params>
+                                    <error_handler>DISCARD_VALUE</error_handler>
+                                </step>
+                                <step>
+                                    <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                                    <params>15m</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>znwcserver.py[{#URL}]</key>
+                            </master_item>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{avg(15m)}&gt;={$URL.ELAPSED_TIME.WARNING}</expression>
+                                    <name>Elapsed Time Last 15min ({ITEM.LASTVALUE}) &gt;= $1. URL: {#URL}</name>
+                                    <opdata>Current Value: {ITEM.LASTVALUE}</opdata>
+                                    <priority>WARNING</priority>
+                                    <description>{#URL}</description>
+                                    <dependencies>
+                                        <dependency>
+                                            <name>Web Сheck Failed With Error {ITEM.LASTVALUE1}. URL: {#URL}</name>
+                                            <expression>{Template LLD Autodiscovery URLs From Nginx Config:znwcserver.errno[{#URL}].last()}&lt;&gt;0</expression>
+                                        </dependency>
+                                    </dependencies>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                    </item_prototypes>
+                    <graph_prototypes>
+                        <graph_prototype>
+                            <name>{#URL}</name>
+                            <width>1300</width>
+                            <graph_items>
+                                <graph_item>
+                                    <sortorder>1</sortorder>
+                                    <color>199C0D</color>
+                                    <item>
+                                        <host>Template LLD Autodiscovery URLs From Nginx Config</host>
+                                        <key>znwcserver.time[{#URL}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
+                    </graph_prototypes>
+                </discovery_rule>
+            </discovery_rules>
+            <macros>
+                <macro>
+                    <macro>{$URL.ELAPSED_TIME.WARNING}</macro>
+                    <value>500</value>
+                    <description>Trigger Threshold</description>
+                </macro>
+                <macro>
+                    <macro>{$URL.MATCHES}</macro>
+                    <value>.+</value>
+                </macro>
+                <macro>
+                    <macro>{$URL.NOT_MATCHES}</macro>
+                    <value>^$</value>
+                </macro>
+                <macro>
+                    <macro>{$ZNWC_AGENT_ARGS}</macro>
+                    <value>-s -r 300</value>
+                    <description>usage: znwcagent.py  [-u]  [-s]  [-r &lt;ret code&gt;]  [-n]         [-p &lt;port&gt;]  [-H &lt;hostname&gt;]  [&lt;config file name&gt;]                                                                                        &lt;config file name&gt;    Path to the nginx config file.              default:  /etc/nginx/nginx.conf                                                                                                                         -u, --human         Human friendly output format                                                                                                  -s, --skip_location   Add this key if you don't want to   handle locations                                                                                                                                                  -r &lt;ret code&gt;, --ret-code &lt;ret code&gt;       Return code. All server and location directives, if they contain            return &lt;code&gt;, will not be processed if  &lt;code&gt; is greater than &lt;ret code&gt;. Default = 399                                                                                                                  -p &lt;port&gt;, --port &lt;port&gt;   Specify the default port for server directives for which there is no listen directive. Default value = 80                                                                                                                                                 -H &lt;hostname&gt;, --hostname &lt;hostname&gt;                        Specify the hostname. Default is system hostname -n, --check-dns   Do Check dns records for names in server_name directive</description>
+                </macro>
+            </macros>
+        </template>
+    </templates>
+    <value_maps>
+        <value_map>
+            <name>LLD autodiscovery URLs From Nginx Config Connection Errors</name>
+            <mappings>
+                <mapping>
+                    <value>0</value>
+                    <newvalue>No Error</newvalue>
+                </mapping>
+                <mapping>
+                    <value>1</value>
+                    <newvalue>HTTP Error</newvalue>
+                </mapping>
+                <mapping>
+                    <value>2</value>
+                    <newvalue>SSL Error</newvalue>
+                </mapping>
+                <mapping>
+                    <value>3</value>
+                    <newvalue>Connect Timeout</newvalue>
+                </mapping>
+                <mapping>
+                    <value>4</value>
+                    <newvalue>Read Timeout</newvalue>
+                </mapping>
+                <mapping>
+                    <value>5</value>
+                    <newvalue>Connection Error</newvalue>
+                </mapping>
+                <mapping>
+                    <value>6</value>
+                    <newvalue>Too Many Redirects</newvalue>
+                </mapping>
+                <mapping>
+                    <value>7</value>
+                    <newvalue>Missing Schema</newvalue>
+                </mapping>
+                <mapping>
+                    <value>8</value>
+                    <newvalue>Invalid Schema</newvalue>
+                </mapping>
+                <mapping>
+                    <value>9</value>
+                    <newvalue>Invalid URL</newvalue>
+                </mapping>
+                <mapping>
+                    <value>10</value>
+                    <newvalue>Invalid Header</newvalue>
+                </mapping>
+                <mapping>
+                    <value>1000</value>
+                    <newvalue>Unknown Error</newvalue>
+                </mapping>
+            </mappings>
+        </value_map>
+    </value_maps>
+</zabbix_export>
