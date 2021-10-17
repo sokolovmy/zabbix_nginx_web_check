@@ -44,7 +44,7 @@ Zabbix LLD autodiscovery URLs From Nginx Config.
         }
     }
 
-Имена из директивы server_name, такие как:
+Имена из директивы server_name такие, как:
 * `*.example.org` - по умолчанию будут заменены на `www.example.org`,
 * `.example.org` - будет заменено на `example.org`,
 * `www.example.*` - удаляется, т.к. невозможно точно предсказать какие имена в реальности будут использованы,
@@ -121,4 +121,7 @@ Zabbix LLD autodiscovery URLs From Nginx Config.
 *znwcagent.py*
 
 Макросы используемые в шаблоне:
-
+* `{$ZNWC_AGENT_ARGS}` - аргументы вызова `znwcagent.py`. По умолчанию -s -r 300, не собирать locations, отбрасывать все редиректы
+* `{$URL.MATCHES}` - обнаруживать все URL подпадающие под это регулярное выражение
+* `{$URL.NOT_MATCHES}` - не обнаруживать все URL подпадающие под это регулярное выражение
+* `{$URL.ELAPSED_TIME.WARNING}` - порог срабатывания триггера время ответа сервера

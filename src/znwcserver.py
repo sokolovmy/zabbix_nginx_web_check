@@ -36,7 +36,7 @@ if __name__ == '__main__':
         except requests.exceptions.InvalidURL:
             m = {'err': 9, 'err_str': 'Invalid URL'}
         except requests.exceptions.InvalidHeader:
-            m = {'err': 10, 'err_str': 'InvalidHeader'}
+            m = {'err': 10, 'err_str': 'Invalid Header'}
         except BaseException:
             m = {'err': 1000, 'err_str': 'Unknown Error'}
 
