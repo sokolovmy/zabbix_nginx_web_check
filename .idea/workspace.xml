@@ -1,19 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a44da9ea-e25e-4b98-bcf5-ce4cbb3856a3" name="Changes" comment="review &amp; refactoring">
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/nginx_web_check.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/nginx_web_check.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+    <list default="true" id="a44da9ea-e25e-4b98-bcf5-ce4cbb3856a3" name="Changes" comment="readme">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/m.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/servers.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test.conf/orig/kidsapp/nginx/conf.d/crm-commons.conf" beforeDir="false" afterPath="$PROJECT_DIR$/src/test.conf/orig/kidsapp/nginx/conf.d/crm-commons.conf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test.conf/orig/kidsapp/nginx/conf.d/paraplancrm.conf" beforeDir="false" afterPath="$PROJECT_DIR$/src/test.conf/orig/kidsapp/nginx/conf.d/paraplancrm.conf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test.conf/orig/kidsapp/nginx/conf.d/sa-commons.conf" beforeDir="false" afterPath="$PROJECT_DIR$/src/test.conf/orig/kidsapp/nginx/conf.d/sa-commons.conf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test.conf/orig/kidsapp/nginx/nginx.conf" beforeDir="false" afterPath="$PROJECT_DIR$/src/test.conf/orig/kidsapp/nginx/nginx.conf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -468,7 +458,14 @@
       <option name="project" value="LOCAL" />
       <updated>1634468679225</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="readme">
+      <created>1634485943320</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1634485943320</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -485,7 +482,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="process special comments" />
     <MESSAGE value="process special comments,&#10;get server names" />
     <MESSAGE value="+ get_location" />
     <MESSAGE value="get_location" />
@@ -510,7 +506,8 @@
     <MESSAGE value="some review 2" />
     <MESSAGE value="replace company name" />
     <MESSAGE value="review &amp; refactoring" />
-    <option name="LAST_COMMIT_MESSAGE" value="review &amp; refactoring" />
+    <MESSAGE value="readme" />
+    <option name="LAST_COMMIT_MESSAGE" value="readme" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
