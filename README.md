@@ -53,7 +53,8 @@ Zabbix LLD autodiscovery URLs From Nginx Config.
 * имена `*`, `_`, `--`, `!@#` и другие некорректные имена удаляются из списка
 Любое имя, в том числе некорректное, может быть заменено с помощью специальных комментариев.
 Поддерживаются специальные комментарии:
-
+    
+    
     # replace: server_name = changed_server_name[, another_server_name[, ...]]
     # имя из списка будет заменено на другое. Имена проверяются на корректность.
     # replace_all: changed_name[, another_changed_name[, ...]]
