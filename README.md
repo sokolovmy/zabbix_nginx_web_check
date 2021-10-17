@@ -55,15 +55,15 @@ Zabbix LLD autodiscovery URLs From Nginx Config.
 Поддерживаются специальные комментарии:
     
     
-    # replace: server_name = changed_server_name[, another_server_name[, ...]]
-    # имя из списка будет заменено на другое. Имена проверяются на корректность.
-    # replace_all: changed_name[, another_changed_name[, ...]]
-    # вся строка с именами будет заменена на новую. Проверка на корректность не производится
-    # skip_this: True
-    # пропустить этот сервер
-    # var: $var_name = var_value
-    # var: @another_var_name = var_value
-    # Переменные встречающиеся в именах будут заменены в соответствии с вышеописанным списком
+      # replace: server_name = changed_server_name[, another_server_name[, ...]]
+      # имя из списка будет заменено на другое. Имена проверяются на корректность.
+      # replace_all: changed_name[, another_changed_name[, ...]]
+      # вся строка с именами будет заменена на новую. Проверка на корректность не производится
+      # skip_this: True
+      # пропустить этот сервер
+      # var: $var_name = var_value
+      # var: @another_var_name = var_value
+      # Переменные встречающиеся в именах будут заменены в соответствии с вышеописанным списком
 
     
 
