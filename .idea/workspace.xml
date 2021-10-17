@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a44da9ea-e25e-4b98-bcf5-ce4cbb3856a3" name="Changes" comment="review code nginx_config.py 2">
-      <change afterPath="$PROJECT_DIR$/tests/coverage.cmd" afterDir="false" />
+    <list default="true" id="a44da9ea-e25e-4b98-bcf5-ce4cbb3856a3" name="Changes" comment="review &amp; refactoring">
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/nginx_web_check.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/nginx_web_check.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/1" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/1.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/1.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/coverage.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements-server.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements-server.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/znwclib/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/znwclib/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/znwclib/nginx_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/znwclib/nginx_config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testing.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_nginx_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_nginx_config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/m.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/servers.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test.conf/orig/kidsapp/nginx/conf.d/crm-commons.conf" beforeDir="false" afterPath="$PROJECT_DIR$/src/test.conf/orig/kidsapp/nginx/conf.d/crm-commons.conf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test.conf/orig/kidsapp/nginx/conf.d/paraplancrm.conf" beforeDir="false" afterPath="$PROJECT_DIR$/src/test.conf/orig/kidsapp/nginx/conf.d/paraplancrm.conf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test.conf/orig/kidsapp/nginx/conf.d/sa-commons.conf" beforeDir="false" afterPath="$PROJECT_DIR$/src/test.conf/orig/kidsapp/nginx/conf.d/sa-commons.conf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test.conf/orig/kidsapp/nginx/nginx.conf" beforeDir="false" afterPath="$PROJECT_DIR$/src/test.conf/orig/kidsapp/nginx/nginx.conf" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,7 +52,8 @@
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/tests" />
+    <property name="full.screen.before.presentation.mode" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/znwcagent.py" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
@@ -62,7 +63,7 @@
       <recent name="C:\Github\nginx_web_check\src\zbx_nginx_web_check" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Unittests in tests">
+  <component name="RunManager" selected="Python.znwcagent">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="nginx_web_check" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -119,6 +120,27 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="C:\Github\nginx_web_check\src\zbx_nginx_web_check\nginx_config.py" />
       <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="znwcagent" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="nginx_web_check" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Github\nginx_web_check\venv.36\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/znwcagent.py" />
+      <option name="PARAMETERS" value="-u $ProjectFileDir$/src/test.conf/kidsapp/nginx.conf" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -197,6 +219,7 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="Python.znwcagent" />
       <item itemvalue="Python.main" />
       <item itemvalue="Python.nginx_config" />
       <item itemvalue="Python tests.Unittests in tests" />
@@ -438,7 +461,14 @@
       <option name="project" value="LOCAL" />
       <updated>1634451290639</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="review &amp; refactoring">
+      <created>1634468679225</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1634468679225</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -455,7 +485,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Initial commit" />
     <MESSAGE value="process special comments" />
     <MESSAGE value="process special comments,&#10;get server names" />
     <MESSAGE value="+ get_location" />
@@ -480,52 +509,13 @@
     <MESSAGE value="some review" />
     <MESSAGE value="some review 2" />
     <MESSAGE value="replace company name" />
-    <option name="LAST_COMMIT_MESSAGE" value="replace company name" />
+    <MESSAGE value="review &amp; refactoring" />
+    <option name="LAST_COMMIT_MESSAGE" value="review &amp; refactoring" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/m.py</url>
-          <line>23</line>
-          <option name="timeStamp" value="9" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/m.py</url>
-          <line>19</line>
-          <option name="timeStamp" value="11" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/m.py</url>
-          <line>20</line>
-          <option name="timeStamp" value="12" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/m.py</url>
-          <line>21</line>
-          <option name="timeStamp" value="13" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/m.py</url>
-          <line>17</line>
-          <option name="timeStamp" value="14" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/m.py</url>
-          <line>16</line>
-          <option name="timeStamp" value="15" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/m.py</url>
-          <line>14</line>
-          <option name="timeStamp" value="17" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/m.py</url>
-          <line>12</line>
-          <option name="timeStamp" value="18" />
-        </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/tests/test_nginx_config.py</url>
           <line>115</line>
