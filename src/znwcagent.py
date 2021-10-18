@@ -43,7 +43,6 @@ def parse_cmd_args(hostname=socket.gethostname(), port=80, return_code=399):
     return parser.parse_args()
 
 
-
 if __name__ == '__main__':
     args = parse_cmd_args()
     urls = get_URLs_from_config(
