@@ -220,7 +220,7 @@ def get_all_listen_directives(server_block, default_port=80, server_ssl_on=False
     return listens
 
 
-def prepare_location(location_args: list, special_comments: dict) -> Optional[str]:
+def prepare_location(location_args: list, location_block: list, special_comments: dict) -> Optional[str]:
     """
     Подготовка location's
     не поддерживаются: ~, ~* - location's с регулярными выражением, а также именованные @Loc_name
@@ -230,6 +230,7 @@ def prepare_location(location_args: list, special_comments: dict) -> Optional[st
         если представлен список, то берется первое значение из списка
     Чтобы пропустить обработку можно написать в комментариях
        #  skip_this: True
+    :param location_block:
     :param location_args:
     :param special_comments:
     """
@@ -258,6 +259,12 @@ def prepare_location(location_args: list, special_comments: dict) -> Optional[st
         return None
     if location.startswith('@'):
         return None
+
+    # check stub_status directive
+    for d in location_block:
+        if d.get('directive') == 'stub_status':
+            return None
+
     return location
 
 
@@ -303,7 +310,7 @@ def get_locations(server_block: list, hostname_var, return_code=399) -> Tuple[li
             da = d['args']
             db = d.get('block')
             special_comments = process_special_comments(db, hostname_var)
-            location = prepare_location(da, special_comments)
+            location = prepare_location(da, db, special_comments)
             if db and skip_on_return(db, return_code):
                 if location == '/':
                     return [], True
