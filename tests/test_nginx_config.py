@@ -8,6 +8,7 @@ from znwclib.nginx_config import process_special_comments, get_server_names, get
 
 cur_test_directory = os.path.dirname(__file__)
 
+
 class TestNginxConfig(TestCase):
     def setUp(self) -> None:
         self.dir_server_comments = [
@@ -394,7 +395,8 @@ class TestNginxConfig(TestCase):
     def test_get_urls_file_config4(self):
         self.assertEqual(
             ['http://hbz.ru', 'https://www.company.com', 'https://www.company.ru'],
-            sorted(get_URLs_from_config(f"{cur_test_directory}/nginx2.conf", 'h.domain.com', 80, 300, True, dns_check=False))
+            sorted(get_URLs_from_config(f"{cur_test_directory}/nginx2.conf", 'h.domain.com', 80, 300, True,
+                                        dns_check=False))
         )
 
 
@@ -576,5 +578,3 @@ servers = [
             'block': [{'directive': 'proxy_pass', 'line': 71, 'args': ['http://192.168.33.68/']}]}
     ]}
 ]
-
-
