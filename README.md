@@ -1,5 +1,7 @@
 Zabbix LLD autodiscovery URLs From Nginx Config.
 ===
+ Version 0.1.1
+
  Скрипт *znwcagent.py* парсит конфигурационный файл nginx.conf. 
  Устанавливается на наблюдаемый хост.
 
@@ -40,6 +42,13 @@ Zabbix LLD autodiscovery URLs From Nginx Config.
                 # var: $var_name = var_value
                 # var: @another_var_name = var_value
                 return 301 https://another.server.name/location
+            }
+            location /nginx_status {
+               stub_status;
+               # skip this location
+            }
+            location /.well-known/acme-challenge {
+               # skip location starts with /.well-known/acme-challenge
             }
         }
     }
