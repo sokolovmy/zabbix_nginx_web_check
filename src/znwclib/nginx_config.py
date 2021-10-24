@@ -415,7 +415,7 @@ def get_URLs_from_config(config_file_name: str, hostname_var: str, default_port:
         return 'Error: ' + ', '.join([err['error'] for err in pl['errors']])
     config = pl['config'][0]['parsed']
     # looking for a directive http
-    http_block = None
+    # http_block = None
     for d in config:
         if d['directive'] == 'http':
             http_block = d['block']
