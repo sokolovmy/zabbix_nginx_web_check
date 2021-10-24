@@ -194,20 +194,20 @@ class TestNginxConfig(TestCase):
     def test_prepare_location_replace_all(self):
         self.assertEqual(
             '/replaced',
-            prepare_location(['/'], {'replace_all': ('/replaced',)})
+            prepare_location(['/'], [], {'replace_all': ('/replaced',)})
         )
 
     def test_prepare_location_skip_this(self):
         self.assertEqual(
             None,
-            prepare_location(['/'], {'skip_this': True})
+            prepare_location(['/'], [], {'skip_this': True})
         )
 
     def test_prepare_location_non_corrected_comment(self):
         self.assertEqual(
             '/',
             prepare_location(
-                ['/'],
+                ['/'], [],
                 {
                     'replace': {'/': '/replaced'},
                     'var': {}
@@ -218,71 +218,83 @@ class TestNginxConfig(TestCase):
     def test_prepare_location_check_unsupported(self):
         self.assertEqual(
             None,
-            prepare_location(['~\kg_am$'], {})
+            prepare_location(['~\kg_am$'], [], {})
         )
         self.assertEqual(
             None,
-            prepare_location(['~*kg_am2'], {})
+            prepare_location(['~*kg_am2'], [], {})
         )
         self.assertEqual(
             None,
-            prepare_location(['~', '/'], {})
+            prepare_location(['~', '/'], [], {})
         )
         self.assertEqual(
             None,
-            prepare_location(['~*', '/'], {})
+            prepare_location(['~*', '/'], [], {})
         )
         self.assertEqual(
             None,
-            prepare_location(['@named'], {'var': {}})
+            prepare_location(['@named'], [], {'var': {}})
         )
         self.assertEqual(
             None,
-            prepare_location(['=', '@named'], {})
+            prepare_location(['=', '@named'], [], {})
         )
 
     def test_prepare_location_supported(self):
         comments = {'var': {}}
         self.assertEqual(
             '/location',
-            prepare_location(['=', '/location'], comments)
+            prepare_location(['=', '/location'], [], comments)
         )
         self.assertEqual(
             '/location2',
-            prepare_location(['^~', '/location2'], {})
+            prepare_location(['^~', '/location2'], [], {})
         )
         self.assertEqual(
             '/location3',
-            prepare_location(['/location3'], {})
+            prepare_location(['/location3'], [], {})
         )
         self.assertEqual(
             '/location4',
-            prepare_location(['=/location4'], comments)
+            prepare_location(['=/location4'], [], comments)
         )
         self.assertEqual(
             '/location5',
-            prepare_location(['^~/location5'], {})
+            prepare_location(['^~/location5'], [], {})
         )
 
     def test_prepare_location_var(self):
         comments = {'var': {'@named': '/change_named_location', '$hbz_var': '/hbz'}}
         self.assertEqual(
             '/location',
-            prepare_location(['=', '/location'], comments)
+            prepare_location(['=', '/location'], [], comments)
         )
         self.assertEqual(
             '/change_named_location',
-            prepare_location(['^~', '@named'], comments)
+            prepare_location(['^~', '@named'], [], comments)
         )
         self.assertEqual(
             '/loc/hbz',
-            prepare_location(['/loc$hbz_var'], comments)
+            prepare_location(['/loc$hbz_var'], [], comments)
         )
 
     def test_prepare_empty_loc(self):
         self.assertEqual(
             None,
-            prepare_location([''], {})
+            prepare_location([''], [], {})
+        )
+
+    def test_prepare_loc_stub_status(self):
+        self.assertEqual(
+            None,
+            prepare_location(['/b_status'], [{'directive': 'stub_status'}], {})
+        )
+
+    def test_prepare_loc_acme_bot(self):
+        self.assertEqual(
+            None,
+            prepare_location(['/.well-known/acme-challenge/'], [], {})
         )
 
     def test_skip_on_return(self):
