@@ -309,7 +309,7 @@ class TestNginxConfig(TestCase):
 
     def test_get_locations(self):
         self.assertEqual(
-            ['/var/qwe/my.host.name', '/named_location', '/', '/hbz', '/hbz/hbz', '/1/2/4'],
+            (['/var/qwe/my.host.name', '/named_location', '/', '/hbz', '/hbz/hbz', '/1/2/4'], False),
             get_locations([
                 {'directive': 'location', 'args': ['/var/$qwe$hostname'], 'block': [
                     {'directive': '#', 'comment': ' var: $qwe = qwe/'}

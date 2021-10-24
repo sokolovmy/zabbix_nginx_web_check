@@ -257,7 +257,7 @@
             <macros>
                 <macro>
                     <macro>{$URL.ELAPSED_TIME.WARNING}</macro>
-                    <value>500</value>
+                    <value>1000</value>
                     <description>Trigger Threshold</description>
                 </macro>
                 <macro>

@@ -1,5 +1,5 @@
 import re
-from typing import Optional, Union
+from typing import Optional, Union, Tuple
 
 import crossplane
 import dns.exception
@@ -253,6 +253,9 @@ def prepare_location(location_args: list, special_comments: dict) -> Optional[st
     elif location.startswith('^~'):
         location = location[2:]
     location = prep_name_var(location, special_comments)
+    # skip acme bot locations
+    if location.startswith('/.well-known/acme-challenge'):
+        return None
     if location.startswith('@'):
         return None
     return location
@@ -274,7 +277,7 @@ def skip_on_return(block: list, return_code) -> bool:
     return False
 
 
-def get_locations(server_block: list, hostname_var, return_code=399) -> list:
+def get_locations(server_block: list, hostname_var, return_code=399) -> Tuple[list, bool]:
     """
     Выдает список location's из блока server. Вложенные location's также добавляются в список.
     Не включаются в список, если return http code больше return_code
@@ -299,17 +302,19 @@ def get_locations(server_block: list, hostname_var, return_code=399) -> list:
         if dd == 'location':
             da = d['args']
             db = d.get('block')
-            if db and skip_on_return(db, return_code):
-                continue
             special_comments = process_special_comments(db, hostname_var)
             location = prepare_location(da, special_comments)
+            if db and skip_on_return(db, return_code):
+                if location == '/':
+                    return [], True
+                continue
             if location:
                 locations.append(location)
-            nested_locations: list = get_locations(db, hostname_var, return_code)
+            nested_locations, _ = get_locations(db, hostname_var, return_code)
             if nested_locations:
                 locations.extend(nested_locations)
 
-    return locations
+    return locations, False
 
 
 def delFileLine(block: list):
@@ -374,9 +379,12 @@ def process_servers(html_block: list, hostname_var, default_port=80, return_code
             ssl_on = ssl_on or check_ssl_on(server_block)
             server_names = get_server_names(server_block, hostname_var)
             if server_names:
+                locations, skip_root = get_locations(server_block, hostname_var, return_code)
+                if skip_root:
+                    continue
                 server = {
                     'server_names': server_names,
-                    'locations': get_locations(server_block, hostname_var, return_code) if not skip_locations else [],
+                    'locations': locations if not skip_locations else [],
                     'listens': get_all_listen_directives(server_block, default_port, ssl_on)
                 }
                 if debug:
