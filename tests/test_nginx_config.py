@@ -17,7 +17,7 @@ class TestNginxConfig(TestCase):
             {'directive': '#', 'comment': 'replace: ~^www\..+\.example\.org$ = www.test.example.org'},
             {'directive': '#', 'comment': 'var: $hbz_var = hbz_value'},
             {'directive': '#', 'comment': 'var: $hostname = herov.domain.com'},
-            {'directive': 'location', 'args': '/', 'block': {}},
+            {'directive': 'url', 'args': '/', 'block': {}},
         ]
         self.test_comments_result = {
             'replace': {
@@ -245,8 +245,8 @@ class TestNginxConfig(TestCase):
     def test_prepare_location_supported(self):
         comments = {'var': {}}
         self.assertEqual(
-            '/location',
-            prepare_location(['=', '/location'], [], comments)
+            '/url',
+            prepare_location(['=', '/url'], [], comments)
         )
         self.assertEqual(
             '/location2',
@@ -268,8 +268,8 @@ class TestNginxConfig(TestCase):
     def test_prepare_location_var(self):
         comments = {'var': {'@named': '/change_named_location', '$hbz_var': '/hbz'}}
         self.assertEqual(
-            '/location',
-            prepare_location(['=', '/location'], [], comments)
+            '/url',
+            prepare_location(['=', '/url'], [], comments)
         )
         self.assertEqual(
             '/change_named_location',
@@ -324,26 +324,26 @@ class TestNginxConfig(TestCase):
         self.assertEqual(
             (['/var/qwe/my.host.name', '/named_location', '/', '/hbz', '/hbz/hbz', '/1/2/4'], False),
             get_locations([
-                {'directive': 'location', 'args': ['/var/$qwe$hostname'], 'block': [
+                {'directive': 'url', 'args': ['/var/$qwe$hostname'], 'block': [
                     {'directive': '#', 'comment': ' var: $qwe = qwe/'}
                 ]},
-                {'directive': 'location', 'args': ['skipped'], 'block': [
+                {'directive': 'url', 'args': ['skipped'], 'block': [
                     {'directive': '#', 'comment': ' skip_this: True'}
                 ]},
-                {'directive': 'location', 'args': ['@named'], 'block': [
+                {'directive': 'url', 'args': ['@named'], 'block': [
                     {'directive': '#', 'comment': ' replace_all: /named_location'}
                 ]},
-                {'directive': 'location', 'args': ['/'], 'block': []},
-                {'directive': 'location', 'args': ['/hbz'], 'block': [
-                    {'directive': 'location', 'args': ['/hbz/hbz'], 'block': []},
-                    {'directive': 'location', 'args': ['/hbz/test1'], 'block': [
+                {'directive': 'url', 'args': ['/'], 'block': []},
+                {'directive': 'url', 'args': ['/hbz'], 'block': [
+                    {'directive': 'url', 'args': ['/hbz/hbz'], 'block': []},
+                    {'directive': 'url', 'args': ['/hbz/test1'], 'block': [
                         {'directive': 'return', 'args': ['400']}
                     ]}
                 ]},
-                {'directive': 'location', 'args': ['/1/2/3'], 'block': [
+                {'directive': 'url', 'args': ['/1/2/3'], 'block': [
                     {'directive': 'return', 'args': ['500']},
                 ]},
-                {'directive': 'location', 'args': ['/1/2/4'], 'block': [
+                {'directive': 'url', 'args': ['/1/2/4'], 'block': [
                     {'directive': 'return', 'args': ['250']},
                 ]},
             ], 'my.host.name')
@@ -455,14 +455,14 @@ servers0 = [
         {'args': [], 'comment': ' replace_all: hbz.ru', 'directive': '#', 'line': 6},
         {'args': [], 'comment': ' var: $hbz_var = hbz_value', 'directive': '#', 'line': 7},
         {'args': ['1.1.1.1:80'], 'directive': 'listen', 'line': 8},
-        {'args': ['/'], 'block': [], 'directive': 'location', 'line': 9},
-        {'args': ['incorrect_location/'], 'block': [], 'directive': 'location', 'line': 9},
-        {'args': ['/hbz'], 'block': [], 'directive': 'location', 'line': 9},
-        {'args': ['=', '/equal'], 'block': [], 'directive': 'location', 'line': 11},
-        {'args': ['~', '/regexpr'], 'block': [], 'directive': 'location', 'line': 13},
-        {'args': ['~*', '/CaseInsensitiveRegexpr'], 'block': [], 'directive': 'location', 'line': 15},
-        {'args': ['^~', '/if_equal_not_check_regexpr'], 'block': [], 'directive': 'location', 'line': 17},
-        {'args': ['@NamedLocation'], 'directive': 'location', 'line': 19, 'block': [
+        {'args': ['/'], 'block': [], 'directive': 'url', 'line': 9},
+        {'args': ['incorrect_location/'], 'block': [], 'directive': 'url', 'line': 9},
+        {'args': ['/hbz'], 'block': [], 'directive': 'url', 'line': 9},
+        {'args': ['=', '/equal'], 'block': [], 'directive': 'url', 'line': 11},
+        {'args': ['~', '/regexpr'], 'block': [], 'directive': 'url', 'line': 13},
+        {'args': ['~*', '/CaseInsensitiveRegexpr'], 'block': [], 'directive': 'url', 'line': 15},
+        {'args': ['^~', '/if_equal_not_check_regexpr'], 'block': [], 'directive': 'url', 'line': 17},
+        {'args': ['@NamedLocation'], 'directive': 'url', 'line': 19, 'block': [
             {'comment': ' var: @NamedLocation = /namedLocation/to/hbz_value', 'directive': '#'},
         ]}
     ]},
@@ -535,12 +535,12 @@ servers = [
         {'directive': 'server_name', 'line': 33, 'args': ['www.company.com']},
         {'directive': 'listen', 'line': 34, 'args': ['443', 'ssl', 'http2']},
         {
-            'directive': 'location', 'line': 35, 'args': ['/'],
+            'directive': 'url', 'line': 35, 'args': ['/'],
             'block': [{'directive': 'include', 'line': 36, 'args': ['./includes/proxy_pass_reverse'], 'includes': [1]},
                       {'directive': 'proxy_pass', 'line': 37, 'args': ['http://192.168.33.97:3002$request_uri']}]
         },
         {
-            'directive': 'location', 'line': 40, 'args': ['/forms'],
+            'directive': 'url', 'line': 40, 'args': ['/forms'],
             'block': [{'directive': 'proxy_set_header', 'line': 41, 'args': ['X-Real-IP', '$remote_addr']},
                       {'directive': 'proxy_pass', 'line': 42, 'args': ['http://192.168.33.97:3003']}]
         },
@@ -559,14 +559,14 @@ servers = [
         {'directive': 'server_name', 'line': 57, 'args': ['www.company.ru']},
         {'directive': 'listen', 'line': 59, 'args': ['443', 'ssl', 'http2']},
         {
-            'directive': 'location', 'line': 60, 'args': ['~*cv-ru\\/.*xml$'],
+            'directive': 'url', 'line': 60, 'args': ['~*cv-ru\\/.*xml$'],
             'block': [{'directive': 'return', 'line': 61, 'args': ['520']}]
         },
         {
-            'directive': 'location', 'line': 63, 'args': ['~*\\?q=node\\/add*$'],
+            'directive': 'url', 'line': 63, 'args': ['~*\\?q=node\\/add*$'],
             'block': [{'directive': 'return', 'line': 64, 'args': ['520']}]},
         {
-            'directive': 'location', 'line': 67,
+            'directive': 'url', 'line': 67,
             'args': ['/sites/default/files/webform/cv-ru'],
             'block': [
                 {'directive': 'proxy_pass', 'line': 68,
@@ -574,7 +574,7 @@ servers = [
             ]
         },
         {
-            'directive': 'location', 'line': 70, 'args': ['/'],
+            'directive': 'url', 'line': 70, 'args': ['/'],
             'block': [{'directive': 'proxy_pass', 'line': 71, 'args': ['http://192.168.33.68/']}]}
     ]}
 ]

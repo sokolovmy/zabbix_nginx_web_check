@@ -222,11 +222,11 @@ def get_all_listen_directives(server_block, default_port=80, server_ssl_on=False
 
 def prepare_location(location_args: list, location_block: list, special_comments: dict) -> Optional[str]:
     """
-    Подготовка location's
-    не поддерживаются: ~, ~* - location's с регулярными выражением, а также именованные @Loc_name
+    Подготовка url's
+    не поддерживаются: ~, ~* - url's с регулярными выражением, а также именованные @Loc_name
     если в комментариях нет им замены они будут пропущены
     Чтобы заменить можно использовать
-        # replace_all: <new location>
+        # replace_all: <new url>
         если представлен список, то берется первое значение из списка
     Чтобы пропустить обработку можно написать в комментариях
        #  skip_this: True
@@ -286,13 +286,13 @@ def skip_on_return(block: list, return_code) -> bool:
 
 def get_locations(server_block: list, hostname_var, return_code=399) -> Tuple[list, bool]:
     """
-    Выдает список location's из блока server. Вложенные location's также добавляются в список.
+    Выдает список url's из блока server. Вложенные url's также добавляются в список.
     Не включаются в список, если return http code больше return_code
-    Не поддерживаются location's выполненные в виде регулярных выражений (~, ~*) и именованные (@Named),
+    Не поддерживаются url's выполненные в виде регулярных выражений (~, ~*) и именованные (@Named),
     их можно заменить при помощи специальных комментариев
 
-    Специальные комментарии должные быть расположены внутри блока location:
-        # replace_all: <changed location>
+    Специальные комментарии должные быть расположены внутри блока url:
+        # replace_all: <changed url>
         # skip_this: True
         # var: $var_name = var_value
         # var: @another_var_name = var_value
@@ -306,7 +306,7 @@ def get_locations(server_block: list, hostname_var, return_code=399) -> Tuple[li
     locations: list = []
     for d in server_block:
         dd = d['directive'].lower()
-        if dd == 'location':
+        if dd == 'url':
             da = d['args']
             db = d.get('block')
             special_comments = process_special_comments(db, hostname_var)
@@ -340,7 +340,7 @@ def delFileLine(block: list):
 def process_servers(html_block: list, hostname_var, default_port=80, return_code=399, skip_locations=False,
                     debug=False):
     """
-    Обрабатывает html block crossplane.parse. возвращает список словарей в котором лежат server_name's & location's
+    Обрабатывает html block crossplane.parse. возвращает список словарей в котором лежат server_name's & url's
 
     Не включаются в список, если в директиве return http_code больше return_code
 

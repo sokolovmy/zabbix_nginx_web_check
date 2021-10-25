@@ -12,7 +12,7 @@ if __name__ == '__main__':
             m = {
                 'err': 0,
                 'status_code': res.status_code,
-                # Final URL location of Response.
+                # Final URL url of Response.
                 'url': res.url,
                 'elapsed': res.elapsed.total_seconds() * 1000,
             }

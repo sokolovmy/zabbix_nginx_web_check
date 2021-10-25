@@ -30,7 +30,7 @@ def parse_cmd_args(hostname=socket.gethostname(), port=80, return_code=399):
     parser.add_argument('-s', '--skip_location', action="store_true",
                         help="Add this key if you don't want to handle locations")
     parser.add_argument('-r', '--ret-code', type=int, default=return_code, metavar='<ret code>',
-                        help='Return code. All server and location directives, if they contain return <code>,'
+                        help='Return code. All server and url directives, if they contain return <code>,'
                              ' will not be processed if <code> is greater than <ret code>. Default = ' +
                              str(return_code))
     parser.add_argument('-p', '--port', type=int, default=port, metavar='<port>',
